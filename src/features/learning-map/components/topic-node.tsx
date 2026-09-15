@@ -3,22 +3,11 @@
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 
 import type { LearningMapNode } from "@/features/learning-map/lib/build-learning-map";
-import type { TopicStatus } from "@/features/topics/types";
+import {
+  topicStatusLabels,
+  topicStatusSymbols,
+} from "@/features/topics/lib/labels";
 import { cn } from "@/lib/utils";
-
-const statusLabels: Record<TopicStatus, string> = {
-  to_learn: "To learn",
-  learning: "Learning",
-  discussed: "Discussed",
-  inbox: "Inbox",
-};
-
-const statusSymbols: Record<TopicStatus, string> = {
-  to_learn: "○",
-  learning: "◐",
-  discussed: "●",
-  inbox: "·",
-};
 
 export function TopicNode({
   data,
@@ -40,12 +29,12 @@ export function TopicNode({
           selected && "topic-node--selected",
         )}
         data-testid={`topic-node-${topic.id}`}
-        aria-label={`${topic.title}, ${statusLabels[topic.status]}, ${topic.difficulty}`}
+        aria-label={`${topic.title}, ${topicStatusLabels[topic.status]}, ${topic.difficulty}`}
       >
         <div className="topic-node__meta">
           <span className={`status status--${topic.status}`}>
-            <span aria-hidden="true">{statusSymbols[topic.status]}</span>
-            {statusLabels[topic.status]}
+            <span aria-hidden="true">{topicStatusSymbols[topic.status]}</span>
+            {topicStatusLabels[topic.status]}
           </span>
           {isCurrentArea ? (
             <span className="current-label">Current area</span>
