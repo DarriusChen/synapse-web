@@ -38,3 +38,22 @@ export type TopicRelation = {
   targetTopicId: string;
   type: TopicRelationType;
 };
+
+export const resourceTypes = [
+  "notes",
+  "paper",
+  "video",
+  "tutorial",
+  "repository",
+  "website",
+] as const;
+
+export type ResourceType = (typeof resourceTypes)[number];
+
+export type Resource = {
+  id: string;
+  topicId: string;
+  title: string;
+  url: string;
+  type: ResourceType;
+};
