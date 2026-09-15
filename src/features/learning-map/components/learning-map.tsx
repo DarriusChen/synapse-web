@@ -8,6 +8,8 @@ import {
   ReactFlow,
   type NodeMouseHandler,
 } from "@xyflow/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { TopicNode } from "@/features/learning-map/components/topic-node";
 import {
@@ -24,6 +26,7 @@ const nodeTypes = {
 };
 
 export function LearningMap() {
+  const router = useRouter();
   const graph = useMemo(
     () => buildLearningMap(topics, topicRelations),
     [],
@@ -43,11 +46,34 @@ export function LearningMap() {
     (topic) => topic.id === selectedTopicId,
   );
 
+  const openTopic = useCallback(
+    (slug: string) => {
+      router.push(`/topics/${slug}`);
+    },
+    [router],
+  );
+
   const handleNodeClick: NodeMouseHandler<LearningMapNode> = useCallback(
-    (_event, node) => {
+    (event, node) => {
+      if (event.detail >= 2) {
+        event.preventDefault();
+        event.stopPropagation();
+        openTopic(node.data.topic.slug);
+        return;
+      }
+
       setSelectedTopicId(node.id);
     },
-    [],
+    [openTopic],
+  );
+
+  const handleNodeDoubleClick: NodeMouseHandler<LearningMapNode> = useCallback(
+    (event, node) => {
+      event.preventDefault();
+      event.stopPropagation();
+      openTopic(node.data.topic.slug);
+    },
+    [openTopic],
   );
 
   return (
@@ -79,13 +105,16 @@ export function LearningMap() {
           edges={graph.edges}
           nodeTypes={nodeTypes}
           onNodeClick={handleNodeClick}
+          onNodeDoubleClick={handleNodeDoubleClick}
           onPaneClick={() => setSelectedTopicId(null)}
           nodesDraggable={false}
           nodesConnectable={false}
           elementsSelectable
           panOnDrag
           zoomOnPinch
-          zoomOnScroll={false}
+          zoomOnScroll
+          zoomOnDoubleClick={false}
+          preventScrolling
           minZoom={0.35}
           maxZoom={1.35}
           fitView
@@ -111,11 +140,20 @@ export function LearningMap() {
           <strong data-testid="selected-topic">
             {selectedTopic?.title ?? "Choose a topic"}
           </strong>
-          <span>
+          <span className="map-selection__meta">
             {selectedTopic
               ? `${selectedTopic.category} · ${selectedTopic.difficulty}`
               : "Click any node to focus it"}
           </span>
+          {selectedTopic ? (
+            <Link
+              className="map-selection__open"
+              href={`/topics/${selectedTopic.slug}`}
+              data-testid="open-topic"
+            >
+              Open topic
+            </Link>
+          ) : null}
         </div>
       </div>
     </section>

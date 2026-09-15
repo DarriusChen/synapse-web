@@ -1,30 +1,12 @@
-import { ArrowDownRight, Network } from "lucide-react";
+import { ArrowDownRight } from "lucide-react";
 
+import { SiteHeader } from "@/components/site-header";
 import { LearningMap } from "@/features/learning-map/components/learning-map";
-import { topics } from "@/features/topics/data/topics";
 
 export default function Home() {
-  const visibleTopicCount = topics.filter(
-    (topic) => topic.status !== "inbox",
-  ).length;
-
   return (
     <main>
-      <header className="site-header">
-        <a className="brand" href="#" aria-label="Synapse home">
-          <span className="brand__mark" aria-hidden="true">
-            <Network size={18} strokeWidth={1.8} />
-          </span>
-          <span>Synapse</span>
-        </a>
-
-        <nav aria-label="Primary navigation">
-          <a className="nav-link nav-link--active" href="#learning-map">
-            Learning map
-          </a>
-          <span className="nav-meta">{visibleTopicCount} topics</span>
-        </nav>
-      </header>
+      <SiteHeader active="map" />
 
       <section className="hero" aria-labelledby="page-title">
         <div className="hero__copy">
