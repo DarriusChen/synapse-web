@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 type SiteHeaderProps = {
   active?: "map" | "admin";
-  visibleTopicCount: number;
+  visibleTopicCount?: number;
 };
 
 export function SiteHeader({ active, visibleTopicCount }: SiteHeaderProps) {
@@ -31,7 +31,9 @@ export function SiteHeader({ active, visibleTopicCount }: SiteHeaderProps) {
         >
           Admin
         </Link>
-        <span className="nav-meta">{visibleTopicCount} topics</span>
+        {visibleTopicCount != null ? (
+          <span className="nav-meta">{visibleTopicCount} topics</span>
+        ) : null}
       </nav>
     </header>
   );

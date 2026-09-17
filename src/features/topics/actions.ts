@@ -8,6 +8,7 @@ import {
   updateTopicWithRelations,
 } from "@/features/topics/lib/topic-store";
 import { parseTopicWrite } from "@/features/topics/lib/topic-write";
+import { assertAdmin } from "@/lib/admin-guard";
 
 export type TopicFormState = {
   error: string;
@@ -26,6 +27,7 @@ export async function createTopicAction(
   _prev: TopicFormState,
   formData: FormData,
 ): Promise<TopicFormState> {
+  await assertAdmin();
   const result = await createTopicWithRelations(parseTopicWrite(formData));
 
   if (!result.ok) {
@@ -40,6 +42,7 @@ export async function updateTopicAction(
   _prev: TopicFormState,
   formData: FormData,
 ): Promise<TopicFormState> {
+  await assertAdmin();
   const topicId = String(formData.get("topicId") ?? "");
   const result = await updateTopicWithRelations(
     topicId,

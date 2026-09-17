@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { SiteHeader } from "@/components/site-header";
+import { logoutAdminAction } from "@/features/admin/actions";
 import {
   topicStatusLabels,
   topicStatusSymbols,
@@ -30,9 +31,16 @@ export default async function AdminTopicsPage() {
             <p className="eyebrow">Topic management</p>
             <h1>Topics</h1>
           </div>
-          <Link className="admin-page__action" href="/admin/topics/new">
-            New topic
-          </Link>
+          <div className="admin-page__actions">
+            <Link className="admin-page__action" href="/admin/topics/new">
+              New topic
+            </Link>
+            <form action={logoutAdminAction}>
+              <button className="admin-page__action" type="submit">
+                Sign out
+              </button>
+            </form>
+          </div>
         </div>
 
         <ul className="admin-topic-list">

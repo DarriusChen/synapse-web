@@ -8,7 +8,7 @@ export function createSupabaseServerClient() {
 
   if (!url || !serviceRoleKey) {
     throw new Error(
-      "Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY. Copy .env.example to .env.local.",
+      "Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY. Copy .env.example to .env.local.",
     );
   }
 

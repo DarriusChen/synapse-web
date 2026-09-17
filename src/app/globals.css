@@ -648,6 +648,12 @@ footer {
   margin-bottom: 28px;
 }
 
+.admin-page__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .admin-page__action {
   display: inline-flex;
   align-items: center;
@@ -664,6 +670,11 @@ footer {
 .admin-page__action:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+button.admin-page__action {
+  cursor: pointer;
+  font: inherit;
 }
 
 .admin-topic-list {
