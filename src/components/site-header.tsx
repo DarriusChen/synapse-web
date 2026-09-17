@@ -1,16 +1,14 @@
 import { Network } from "lucide-react";
 import Link from "next/link";
 
-import { getVisibleTopicCount } from "@/features/topics/lib/topic-detail";
 import { cn } from "@/lib/utils";
 
 type SiteHeaderProps = {
-  active?: "map";
+  active?: "map" | "admin";
+  visibleTopicCount?: number;
 };
 
-export function SiteHeader({ active }: SiteHeaderProps) {
-  const visibleTopicCount = getVisibleTopicCount();
-
+export function SiteHeader({ active, visibleTopicCount }: SiteHeaderProps) {
   return (
     <header className="site-header">
       <Link className="brand" href="/" aria-label="Synapse home">
@@ -27,7 +25,15 @@ export function SiteHeader({ active }: SiteHeaderProps) {
         >
           Learning map
         </Link>
-        <span className="nav-meta">{visibleTopicCount} topics</span>
+        <Link
+          className={cn("nav-link", active === "admin" && "nav-link--active")}
+          href="/admin/topics"
+        >
+          Admin
+        </Link>
+        {visibleTopicCount != null ? (
+          <span className="nav-meta">{visibleTopicCount} topics</span>
+        ) : null}
       </nav>
     </header>
   );

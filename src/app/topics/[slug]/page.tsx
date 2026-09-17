@@ -5,22 +5,27 @@ import { SiteHeader } from "@/components/site-header";
 import { TopicDetailView } from "@/features/topics/components/topic-detail";
 import {
   getTopicDetail,
-  getTopicSlugs,
+  getVisibleTopicCount,
 } from "@/features/topics/lib/topic-detail";
+import { readTopicStore } from "@/features/topics/lib/topic-store";
+
+export const dynamic = "force-dynamic";
 
 type TopicPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return getTopicSlugs().map((slug) => ({ slug }));
-}
-
 export async function generateMetadata({
   params,
 }: TopicPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const detail = getTopicDetail(slug);
+  const store = await readTopicStore();
+  const detail = getTopicDetail(
+    slug,
+    store.topics,
+    store.topicRelations,
+    store.resources,
+  );
 
   if (!detail) {
     return { title: "Topic not found" };
@@ -37,7 +42,13 @@ export async function generateMetadata({
 
 export default async function TopicPage({ params }: TopicPageProps) {
   const { slug } = await params;
-  const detail = getTopicDetail(slug);
+  const store = await readTopicStore();
+  const detail = getTopicDetail(
+    slug,
+    store.topics,
+    store.topicRelations,
+    store.resources,
+  );
 
   if (!detail) {
     notFound();
@@ -45,7 +56,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
 
   return (
     <main className="topic-page">
-      <SiteHeader />
+      <SiteHeader visibleTopicCount={getVisibleTopicCount(store.topics)} />
       <TopicDetailView detail={detail} />
     </main>
   );

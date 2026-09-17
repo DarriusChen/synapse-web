@@ -1,10 +1,19 @@
 import { SiteHeader } from "@/components/site-header";
 import { LearningMap } from "@/features/learning-map/components/learning-map";
+import { getVisibleTopicCount } from "@/features/topics/lib/topic-detail";
+import { readTopicStore } from "@/features/topics/lib/topic-store";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const store = await readTopicStore();
+
   return (
     <main>
-      <SiteHeader active="map" />
+      <SiteHeader
+        active="map"
+        visibleTopicCount={getVisibleTopicCount(store.topics)}
+      />
 
       <section className="hero" aria-labelledby="page-title">
         <p className="eyebrow">AI Study Group · Shared curriculum</p>
@@ -25,12 +34,15 @@ export default function Home() {
           <span><i className="status-dot status-dot--learning" />Learning now</span>
           <span><i className="status-dot status-dot--to-learn" />To learn</span>
         </div>
-        <LearningMap />
+        <LearningMap
+          topics={store.topics}
+          topicRelations={store.topicRelations}
+        />
       </section>
 
       <footer>
         <span>AI Study Group</span>
-        <span>Map v1 · Read flow</span>
+        <span>Map v1 · Topic management</span>
       </footer>
     </main>
   );

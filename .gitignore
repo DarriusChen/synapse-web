@@ -10,10 +10,12 @@
 
 # local environment files
 .env*
+!.env.example
 
 # misc
 .DS_Store
 *.pem
+*.tmp
 
 # debug
 npm-debug.log*
