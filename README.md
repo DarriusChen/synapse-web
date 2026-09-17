@@ -1,45 +1,45 @@
 # Synapse
 
-Synapse 是給 AI 讀書會使用的協作式學習地圖。它把主題、先備知識與延伸關聯呈現在同一張視覺化地圖上，讓成員能快速理解學習順序、瀏覽筆記與資源，也讓管理者持續整理課程內容。
+Synapse is a collaborative learning map for AI study groups. It brings topics, prerequisites, and related concepts together in a visual map so members can understand the recommended learning path, browse notes and resources, and keep the shared curriculum organized.
 
-## 功能
+## Features
 
-- 視覺化 AI Learning Map
-- 主題列表、分類與狀態篩選
-- 主題詳情、先備知識、相關主題與學習資源
-- 管理者登入
-- 新增與編輯主題及其關聯
-- Supabase PostgreSQL 資料儲存
+- Visual AI learning map
+- Topic list with category and status filters
+- Topic details, prerequisites, related topics, and learning resources
+- Password-protected admin area
+- Topic and relationship management
+- PostgreSQL storage powered by Supabase
 
-## 技術
+## Tech Stack
 
-- Next.js 16（App Router）
-- React 19、TypeScript
+- Next.js 16 (App Router)
+- React 19 and TypeScript
 - Supabase
 - React Flow
 - Tailwind CSS 4
-- Vitest、Testing Library
+- Vitest and Testing Library
 
-## 開始使用
+## Getting Started
 
-### 1. 安裝依賴
+### 1. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 2. 建立 Supabase 資料庫
+### 2. Set up the Supabase database
 
-建立一個 Supabase project，接著在 Supabase SQL Editor 依序執行：
+Create a Supabase project, then run the following files in the Supabase SQL Editor in order:
 
 1. `supabase/migrations/001_topics.sql`
 2. `supabase/seed.sql`
 
-Seed 會加入一組 AI 學習主題、關聯與範例資源，而且可以安全地重複執行。
+The seed file adds a collection of AI topics, relationships, and sample resources. It is safe to run more than once.
 
-### 3. 設定環境變數
+### 3. Configure environment variables
 
-在專案根目錄建立 `.env.local`：
+Create a `.env.local` file in the project root:
 
 ```dotenv
 SUPABASE_URL=https://your-project.supabase.co
@@ -47,50 +47,50 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ADMIN_PASSWORD=choose-a-strong-password
 ```
 
-`SUPABASE_SERVICE_ROLE_KEY` 具有高權限，只能放在伺服器端環境變數中，不要提交到 Git 或暴露給瀏覽器。
+`SUPABASE_SERVICE_ROLE_KEY` grants elevated access. Keep it in server-side environment variables only, and never commit it to Git or expose it to the browser.
 
-### 4. 啟動開發伺服器
+### 4. Start the development server
 
 ```bash
 npm run dev
 ```
 
-開啟 [http://localhost:3000](http://localhost:3000)。管理頁面位於 [http://localhost:3000/admin/topics](http://localhost:3000/admin/topics)，登入密碼為 `ADMIN_PASSWORD`。
+Open [http://localhost:3000](http://localhost:3000). The admin area is available at [http://localhost:3000/admin/topics](http://localhost:3000/admin/topics); sign in with the value of `ADMIN_PASSWORD`.
 
-## 常用指令
+## Available Scripts
 
 ```bash
-npm run dev        # 啟動開發伺服器
-npm run build      # 建立 production build
-npm run start      # 啟動 production server
-npm run lint       # 執行 ESLint
-npm run typecheck  # 執行 TypeScript 檢查
-npm test           # 執行測試
+npm run dev        # Start the development server
+npm run build      # Create a production build
+npm run start      # Start the production server
+npm run lint       # Run ESLint
+npm run typecheck  # Run TypeScript checks
+npm test           # Run the test suite
 ```
 
-## 主要路由
+## Routes
 
-- `/`：Learning Map
-- `/topics`：主題列表
-- `/topics/[slug]`：主題詳情
-- `/admin/login`：管理者登入
-- `/admin/topics`：主題管理
-- `/admin/topics/new`：新增主題
+- `/` — Learning map
+- `/topics` — Topic directory
+- `/topics/[slug]` — Topic details
+- `/admin/login` — Admin sign-in
+- `/admin/topics` — Topic management
+- `/admin/topics/new` — Create a topic
 
-## 專案結構
+## Project Structure
 
 ```text
 src/
-├── app/                    # 頁面與 layouts
-├── components/             # 共用 UI
+├── app/                    # Pages and layouts
+├── components/             # Shared UI
 ├── features/
-│   ├── admin/              # 管理者登入
-│   ├── learning-map/       # 地圖呈現與佈局
-│   └── topics/             # 主題資料、表單與詳情
-└── lib/                    # Supabase、session 與共用工具
+│   ├── admin/              # Admin authentication
+│   ├── learning-map/       # Map rendering and layout
+│   └── topics/             # Topic data, forms, and details
+└── lib/                    # Supabase, sessions, and shared utilities
 supabase/
-├── migrations/             # 資料庫 schema
-└── seed.sql                # 開發用範例資料
+├── migrations/             # Database schema
+└── seed.sql                # Sample development data
 ```
 
-更完整的產品背景與 V1 範圍請參考 [AI Study Group Web App — V1 Product Spec.md](AI%20Study%20Group%20Web%20App%20—%20V1%20Product%20Spec.md)。
+For more product context and the complete V1 scope, see [AI Study Group Web App — V1 Product Spec.md](AI%20Study%20Group%20Web%20App%20—%20V1%20Product%20Spec.md).
