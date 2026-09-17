@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { LearningMap } from "@/features/learning-map/components/learning-map";
+import { topicRelations, topics } from "@/features/topics/data/topics";
 
 const push = vi.fn();
 
@@ -15,7 +16,7 @@ describe("LearningMap", () => {
   });
 
   it("selects a topic without navigating away from the map", async () => {
-    render(<LearningMap />);
+    render(<LearningMap topics={topics} topicRelations={topicRelations} />);
 
     expect(screen.getByTestId("selected-topic")).toHaveTextContent(
       "Choose a topic",
@@ -36,7 +37,7 @@ describe("LearningMap", () => {
   });
 
   it("opens the topic page when the node is double-clicked", async () => {
-    render(<LearningMap />);
+    render(<LearningMap topics={topics} topicRelations={topicRelations} />);
 
     fireEvent.click(await screen.findByText("RAG"), { detail: 2 });
 

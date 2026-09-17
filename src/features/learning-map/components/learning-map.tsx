@@ -16,20 +16,22 @@ import {
   buildLearningMap,
   type LearningMapNode,
 } from "@/features/learning-map/lib/build-learning-map";
-import {
-  topicRelations,
-  topics,
-} from "@/features/topics/data/topics";
+import type { Topic, TopicRelation } from "@/features/topics/types";
 
 const nodeTypes = {
   topic: TopicNode,
 };
 
-export function LearningMap() {
+type LearningMapProps = {
+  topics: Topic[];
+  topicRelations: TopicRelation[];
+};
+
+export function LearningMap({ topics, topicRelations }: LearningMapProps) {
   const router = useRouter();
   const graph = useMemo(
     () => buildLearningMap(topics, topicRelations),
-    [],
+    [topics, topicRelations],
   );
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
 
@@ -42,9 +44,7 @@ export function LearningMap() {
     [graph.nodes, selectedTopicId],
   );
 
-  const selectedTopic = topics.find(
-    (topic) => topic.id === selectedTopicId,
-  );
+  const selectedTopic = topics.find((topic) => topic.id === selectedTopicId);
 
   const openTopic = useCallback(
     (slug: string) => {
