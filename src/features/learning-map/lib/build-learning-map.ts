@@ -358,8 +358,16 @@ export function buildLearningMap(
     },
   }));
 
+  const statusById = new Map(
+    visibleTopics.map((topic) => [topic.id, topic.status]),
+  );
+
   const edges: LearningMapEdge[] = visibleRelations.map((relation) => {
     const isPrerequisite = relation.type === "prerequisite";
+    const isCompleted =
+      isPrerequisite &&
+      statusById.get(relation.sourceTopicId) === "discussed" &&
+      statusById.get(relation.targetTopicId) === "discussed";
     const source = positions.get(relation.sourceTopicId) ?? { x: 0, y: 0 };
     const target = positions.get(relation.targetTopicId) ?? { x: 0, y: 0 };
     const related =
@@ -392,12 +400,16 @@ export function buildLearningMap(
             type: MarkerType.ArrowClosed,
             width: 16,
             height: 16,
-            color: "var(--edge-prerequisite)",
+            color: isCompleted
+              ? "var(--edge-prerequisite-completed)"
+              : "var(--edge-prerequisite)",
           }
         : undefined,
       animated: false,
       className: isPrerequisite
-        ? "learning-edge learning-edge--prerequisite"
+        ? `learning-edge learning-edge--prerequisite${
+            isCompleted ? " learning-edge--completed" : ""
+          }`
         : "learning-edge learning-edge--related",
       ariaLabel: isPrerequisite
         ? `${relation.sourceTopicId} is a prerequisite for ${relation.targetTopicId}`

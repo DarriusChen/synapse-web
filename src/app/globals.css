@@ -17,6 +17,7 @@
   --violet: #685b8f;
   --violet-soft: #ebe8f3;
   --edge-prerequisite: #7b9188;
+  --edge-prerequisite-completed: #3f6a5c;
   --edge-related: #a9a2b8;
   --map-dot: #cbd3ce;
   --shadow: 0 18px 48px rgb(28 43 37 / 8%);
@@ -337,16 +338,64 @@ main {
   box-shadow: 0 12px 26px rgb(37 50 45 / 12%);
 }
 
+.topic-node--discussed {
+  border-color: #b7cec4;
+  box-shadow:
+    inset 3px 0 0 var(--accent),
+    0 7px 20px rgb(37 50 45 / 7%);
+}
+
+.topic-node--to-learn {
+  border-color: var(--border);
+  background: rgb(255 255 255 / 68%);
+  box-shadow: none;
+}
+
 .topic-node--current {
   border-color: #d1af78;
+  background: rgb(255 255 255 / 96%);
   box-shadow:
     inset 3px 0 0 #d0923f,
     0 7px 20px rgb(65 48 24 / 8%);
 }
 
+.react-flow__node:hover .topic-node--discussed {
+  border-color: #8fb3a6;
+  box-shadow:
+    inset 3px 0 0 var(--accent),
+    0 12px 26px rgb(37 50 45 / 12%);
+}
+
+.react-flow__node:hover .topic-node--to-learn {
+  border-color: var(--border-strong);
+  background: rgb(255 255 255 / 86%);
+  box-shadow: 0 10px 22px rgb(37 50 45 / 7%);
+}
+
+.react-flow__node:hover .topic-node--current {
+  border-color: #c79a58;
+  box-shadow:
+    inset 3px 0 0 #d0923f,
+    0 12px 26px rgb(65 48 24 / 12%);
+}
+
 .topic-node--selected {
   border-color: var(--accent);
   box-shadow:
+    0 0 0 3px rgb(40 105 85 / 13%),
+    0 14px 30px rgb(37 50 45 / 13%);
+}
+
+.topic-node--discussed.topic-node--selected {
+  box-shadow:
+    inset 3px 0 0 var(--accent),
+    0 0 0 3px rgb(40 105 85 / 13%),
+    0 14px 30px rgb(37 50 45 / 13%);
+}
+
+.topic-node--current.topic-node--selected {
+  box-shadow:
+    inset 3px 0 0 #d0923f,
     0 0 0 3px rgb(40 105 85 / 13%),
     0 14px 30px rgb(37 50 45 / 13%);
 }
@@ -381,6 +430,28 @@ main {
 
 .status--learning {
   color: var(--amber);
+}
+
+.status--to_learn {
+  color: var(--muted-light);
+}
+
+.topic-node .status {
+  padding: 3px 6px;
+  border-radius: 4px;
+}
+
+.topic-node .status--discussed {
+  background: var(--accent-soft);
+}
+
+.topic-node .status--learning {
+  background: var(--amber-soft);
+}
+
+.topic-node .status--to_learn {
+  color: var(--muted);
+  border: 1px solid var(--border-strong);
 }
 
 .current-label {
@@ -437,15 +508,31 @@ main {
   transition: stroke 150ms ease, stroke-width 150ms ease;
 }
 
+.react-flow__edge.learning-edge--prerequisite {
+  opacity: 0.48;
+}
+
 .react-flow__edge.learning-edge--prerequisite path {
   stroke: var(--edge-prerequisite);
   stroke-width: 1.45;
+}
+
+.react-flow__edge.learning-edge--completed {
+  opacity: 1;
+}
+
+.react-flow__edge.learning-edge--completed path {
+  stroke: var(--edge-prerequisite-completed);
 }
 
 .react-flow__edge.learning-edge--related path {
   stroke: var(--edge-related);
   stroke-width: 1.35;
   stroke-dasharray: 6 6;
+}
+
+.react-flow__edge.learning-edge:hover {
+  opacity: 1;
 }
 
 .react-flow__edge.learning-edge:hover path {

@@ -25,6 +25,8 @@ export function TopicNode({
       <article
         className={cn(
           "topic-node",
+          topic.status === "discussed" && "topic-node--discussed",
+          topic.status === "to_learn" && "topic-node--to-learn",
           isCurrentArea && "topic-node--current",
           selected && "topic-node--selected",
         )}
