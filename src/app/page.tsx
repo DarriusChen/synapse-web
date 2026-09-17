@@ -1,5 +1,3 @@
-import { ArrowDownRight } from "lucide-react";
-
 import { SiteHeader } from "@/components/site-header";
 import { LearningMap } from "@/features/learning-map/components/learning-map";
 
@@ -9,23 +7,16 @@ export default function Home() {
       <SiteHeader active="map" />
 
       <section className="hero" aria-labelledby="page-title">
-        <div className="hero__copy">
-          <p className="eyebrow">AI Study Group · Shared curriculum</p>
-          <h1 id="page-title">
-            Learn AI together,
-            <br />
-            <span>one connection at a time.</span>
-          </h1>
-          <p className="hero__description">
-            Explore the map to see what comes first, what connects, and where
-            the group is learning now.
-          </p>
-        </div>
-
-        <a className="explore-cue" href="#learning-map">
-          Explore the map
-          <ArrowDownRight size={18} aria-hidden="true" />
-        </a>
+        <p className="eyebrow">AI Study Group · Shared curriculum</p>
+        <h1 id="page-title">
+          Learn AI together,
+          <br />
+          <span>one connection at a time.</span>
+        </h1>
+        <p className="hero__description">
+          Explore the map to see what comes first, what connects, and where
+          the group is learning now.
+        </p>
       </section>
 
       <section id="learning-map" className="map-section">

@@ -121,13 +121,8 @@ main {
 
 .hero {
   width: var(--page-width);
-  min-height: 360px;
   margin: 0 auto;
-  padding: 70px 0 58px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 64px;
+  padding: 54px 0 42px;
 }
 
 .eyebrow {
@@ -159,24 +154,6 @@ main {
   font-size: 17px;
   line-height: 1.65;
   letter-spacing: -0.012em;
-}
-
-.explore-cue {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 18px;
-  padding: 13px 0;
-  color: var(--muted);
-  border-bottom: 1px solid var(--border-strong);
-  font-size: 13px;
-  font-weight: 650;
-  transition: color 160ms ease, border-color 160ms ease;
-}
-
-.explore-cue:hover {
-  color: var(--accent);
-  border-color: var(--accent);
 }
 
 .map-section {
@@ -681,9 +658,7 @@ footer {
   }
 
   .hero {
-    min-height: 330px;
-    padding: 54px 0 42px;
-    display: block;
+    padding: 42px 0 32px;
   }
 
   .hero h1 {
@@ -694,10 +669,6 @@ footer {
     max-width: 480px;
     margin-top: 24px;
     font-size: 15px;
-  }
-
-  .explore-cue {
-    margin-top: 28px;
   }
 
   .status-legend {
@@ -743,8 +714,7 @@ footer {
   }
 
   .hero {
-    min-height: 310px;
-    padding-top: 46px;
+    padding-top: 36px;
   }
 
   .hero h1 {
