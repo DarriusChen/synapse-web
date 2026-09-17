@@ -44,6 +44,31 @@ describe("TopicDetailView", () => {
     );
   });
 
+  it("returns to the topics list when opened from there", () => {
+    const detail = getTopicDetail("rag");
+
+    if (!detail) {
+      throw new Error("Expected RAG seed topic");
+    }
+
+    render(
+      <TopicDetailView
+        detail={detail}
+        backHref="/topics"
+        backLabel="Back to topics"
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "Back to topics" })).toHaveAttribute(
+      "href",
+      "/topics",
+    );
+    expect(screen.getByRole("link", { name: "Embedding" })).toHaveAttribute(
+      "href",
+      "/topics/embedding?from=topics",
+    );
+  });
+
   it("hides empty neighbor and resource sections", () => {
     render(
       <TopicDetailView

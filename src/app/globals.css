@@ -31,6 +31,7 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -118,6 +119,10 @@ main {
 .nav-meta {
   color: var(--muted-light);
   font-variant-numeric: tabular-nums;
+}
+
+.nav-meta.nav-link--active {
+  color: var(--foreground);
 }
 
 .hero {
@@ -705,7 +710,48 @@ button.admin-page__action {
   letter-spacing: -0.02em;
 }
 
-.admin-topic-list a:hover {
+.topic-index {
+  width: min(860px, calc(100% - var(--page-gutter) * 2));
+  margin: 0 auto;
+  padding: 48px 0 96px;
+}
+
+.topic-index h1 {
+  margin: 0;
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 520;
+  letter-spacing: -0.045em;
+}
+
+.topic-list {
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.topic-list a {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) 0.9fr 0.7fr 0.8fr;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-strong);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.topic-list strong {
+  color: var(--foreground);
+  font-size: 15px;
+  font-weight: 620;
+  letter-spacing: -0.02em;
+}
+
+.topic-list a:hover {
   border-color: var(--border-strong);
 }
 
@@ -927,10 +973,6 @@ button.admin-page__action {
     --page-gutter: 16px;
   }
 
-  .nav-meta {
-    display: none;
-  }
-
   .hero {
     padding: 42px 0 32px;
   }
@@ -977,7 +1019,8 @@ button.admin-page__action {
     padding-top: 32px;
   }
 
-  .admin-topic-list a {
+  .admin-topic-list a,
+  .topic-list a {
     grid-template-columns: 1fr;
     gap: 4px;
   }

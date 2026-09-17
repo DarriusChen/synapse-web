@@ -119,8 +119,12 @@ export function getTopicDetail(
   };
 }
 
+export function getVisibleTopics(allTopics: Topic[] = seedTopics) {
+  return allTopics.filter((topic) => topic.status !== "inbox");
+}
+
 export function getVisibleTopicCount(allTopics: Topic[] = seedTopics) {
-  return allTopics.filter((topic) => topic.status !== "inbox").length;
+  return getVisibleTopics(allTopics).length;
 }
 
 export function getTopicSlugs(allTopics: Topic[] = seedTopics) {

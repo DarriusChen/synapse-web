@@ -13,6 +13,7 @@ export const dynamic = "force-dynamic";
 
 type TopicPageProps = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ from?: string }>;
 };
 
 export async function generateMetadata({
@@ -40,8 +41,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function TopicPage({ params }: TopicPageProps) {
+export default async function TopicPage({
+  params,
+  searchParams,
+}: TopicPageProps) {
   const { slug } = await params;
+  const { from } = await searchParams;
   const store = await readTopicStore();
   const detail = getTopicDetail(
     slug,
@@ -54,10 +59,19 @@ export default async function TopicPage({ params }: TopicPageProps) {
     notFound();
   }
 
+  const fromTopics = from === "topics";
+
   return (
     <main className="topic-page">
-      <SiteHeader visibleTopicCount={getVisibleTopicCount(store.topics)} />
-      <TopicDetailView detail={detail} />
+      <SiteHeader
+        active={fromTopics ? "topics" : undefined}
+        visibleTopicCount={getVisibleTopicCount(store.topics)}
+      />
+      <TopicDetailView
+        detail={detail}
+        backHref={fromTopics ? "/topics" : "/#learning-map"}
+        backLabel={fromTopics ? "Back to topics" : "Back to map"}
+      />
     </main>
   );
 }

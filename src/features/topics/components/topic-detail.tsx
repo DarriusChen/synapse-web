@@ -11,16 +11,24 @@ import type { Resource, Topic } from "@/features/topics/types";
 
 type TopicDetailViewProps = {
   detail: TopicDetail;
+  backHref?: string;
+  backLabel?: string;
 };
+
+function topicPath(slug: string, fromTopics?: boolean) {
+  return fromTopics ? `/topics/${slug}?from=topics` : `/topics/${slug}`;
+}
 
 function TopicLinkList({
   label,
   topics,
   testId,
+  fromTopics,
 }: {
   label: string;
   topics: Topic[];
   testId: string;
+  fromTopics?: boolean;
 }) {
   if (topics.length === 0) {
     return null;
@@ -32,7 +40,7 @@ function TopicLinkList({
       <ul className="topic-link-list" data-testid={testId}>
         {topics.map((topic) => (
           <li key={topic.id}>
-            <Link href={`/topics/${topic.slug}`}>{topic.title}</Link>
+            <Link href={topicPath(topic.slug, fromTopics)}>{topic.title}</Link>
           </li>
         ))}
       </ul>
@@ -75,14 +83,19 @@ function ResourceList({
   );
 }
 
-export function TopicDetailView({ detail }: TopicDetailViewProps) {
+export function TopicDetailView({
+  detail,
+  backHref = "/#learning-map",
+  backLabel = "Back to map",
+}: TopicDetailViewProps) {
   const { topic, prerequisites, related, resources, notes } = detail;
+  const fromTopics = backHref === "/topics";
 
   return (
     <article className="topic-detail" data-testid="topic-detail">
-      <Link className="topic-back" href="/#learning-map">
+      <Link className="topic-back" href={backHref}>
         <ArrowLeft size={16} aria-hidden="true" />
-        Back to map
+        {backLabel}
       </Link>
 
       <header className="topic-detail__header">
@@ -114,11 +127,13 @@ export function TopicDetailView({ detail }: TopicDetailViewProps) {
         label="Prerequisites"
         topics={prerequisites}
         testId="topic-prerequisites"
+        fromTopics={fromTopics}
       />
       <TopicLinkList
         label="Related topics"
         topics={related}
         testId="topic-related"
+        fromTopics={fromTopics}
       />
       <ResourceList
         label="Resources"

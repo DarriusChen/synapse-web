@@ -6,6 +6,7 @@ import {
   getTopicBySlug,
   getTopicDetail,
   getTopicNeighbors,
+  getVisibleTopics,
 } from "@/features/topics/lib/topic-detail";
 import type { Resource, Topic, TopicRelation } from "@/features/topics/types";
 
@@ -113,12 +114,20 @@ describe("getTopicDetail", () => {
   });
 });
 
-describe("seed resources", () => {
-  it("only attach to known topics", () => {
-    const topicIds = new Set(topics.map((topic) => topic.id));
+describe("getVisibleTopics", () => {
+  it("excludes inbox topics from the public list", () => {
+    const inbox: Topic = {
+      id: "future-topic",
+      slug: "future-topic",
+      title: "Future Topic",
+      difficulty: "beginner",
+      status: "inbox",
+      createdAt: "2026-09-10T00:00:00.000Z",
+      updatedAt: "2026-09-10T00:00:00.000Z",
+    };
 
-    resources.forEach((resource) => {
-      expect(topicIds.has(resource.topicId)).toBe(true);
-    });
+    expect(getVisibleTopics([...topics, inbox]).map((topic) => topic.id)).not.toContain(
+      "future-topic",
+    );
   });
 });

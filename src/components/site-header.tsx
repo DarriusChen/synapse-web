@@ -4,7 +4,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 type SiteHeaderProps = {
-  active?: "map" | "admin";
+  active?: "map" | "admin" | "topics";
   visibleTopicCount?: number;
 };
 
@@ -21,7 +21,7 @@ export function SiteHeader({ active, visibleTopicCount }: SiteHeaderProps) {
       <nav aria-label="Primary navigation">
         <Link
           className={cn("nav-link", active === "map" && "nav-link--active")}
-          href="/#learning-map"
+          href={active === "map" ? "/#learning-map" : "/"}
         >
           Learning map
         </Link>
@@ -32,7 +32,16 @@ export function SiteHeader({ active, visibleTopicCount }: SiteHeaderProps) {
           Admin
         </Link>
         {visibleTopicCount != null ? (
-          <span className="nav-meta">{visibleTopicCount} topics</span>
+          <Link
+            className={cn(
+              "nav-link",
+              "nav-meta",
+              active === "topics" && "nav-link--active",
+            )}
+            href="/topics"
+          >
+            {visibleTopicCount} topics
+          </Link>
         ) : null}
       </nav>
     </header>
