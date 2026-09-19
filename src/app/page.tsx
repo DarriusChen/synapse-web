@@ -2,11 +2,15 @@ import { SiteHeader } from "@/components/site-header";
 import { LearningMap } from "@/features/learning-map/components/learning-map";
 import { getVisibleTopicCount } from "@/features/topics/lib/topic-detail";
 import { readTopicStore } from "@/features/topics/lib/topic-store";
+import { hasAdminSession } from "@/lib/admin-guard";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const store = await readTopicStore();
+  const [store, isAdmin] = await Promise.all([
+    readTopicStore(),
+    hasAdminSession(),
+  ]);
 
   return (
     <main>
@@ -33,10 +37,12 @@ export default async function Home() {
           <span><i className="status-dot status-dot--discussed" />Discussed</span>
           <span><i className="status-dot status-dot--learning" />Learning now</span>
           <span><i className="status-dot status-dot--to-learn" />To learn</span>
+          <span><i className="status-dot status-dot--inbox" />Inbox</span>
         </div>
         <LearningMap
           topics={store.topics}
           topicRelations={store.topicRelations}
+          isAdmin={isAdmin}
         />
       </section>
 

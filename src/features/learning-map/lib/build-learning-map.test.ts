@@ -27,7 +27,7 @@ describe("buildLearningMap", () => {
     });
   });
 
-  it("excludes inbox topics and their relationships", () => {
+  it("shows inbox topics without edges, parked to the right of the curriculum", () => {
     const inboxTopic: Topic = {
       id: "future-topic",
       slug: "future-topic",
@@ -48,9 +48,16 @@ describe("buildLearningMap", () => {
       [...topics, inboxTopic],
       [...topicRelations, inboxRelation],
     );
+    const inboxNode = graph.nodes.find((node) => node.id === inboxTopic.id);
+    const maxCurriculumX = Math.max(
+      ...graph.nodes
+        .filter((node) => node.data.topic.status !== "inbox")
+        .map((node) => node.position.x),
+    );
 
-    expect(graph.nodes.some((node) => node.id === inboxTopic.id)).toBe(false);
+    expect(inboxNode).toBeDefined();
     expect(graph.edges.some((edge) => edge.id === inboxRelation.id)).toBe(false);
+    expect(inboxNode?.position.x).toBeGreaterThan(maxCurriculumX);
   });
 
   it("visually distinguishes prerequisite and related edges", () => {

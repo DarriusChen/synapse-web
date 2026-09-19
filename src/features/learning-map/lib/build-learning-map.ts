@@ -331,18 +331,70 @@ function relatedEdgeRouting(
   };
 }
 
+function inboxLaneX(positions: Map<string, { x: number; y: number }>) {
+  if (positions.size === 0) {
+    return 0;
+  }
+
+  return (
+    Math.max(...[...positions.values()].map((position) => position.x)) +
+    NODE_WIDTH +
+    COLUMN_GAP
+  );
+}
+
+function layoutInboxTopics(
+  topics: Topic[],
+  x: number,
+  startY: number,
+) {
+  const positions = new Map<string, { x: number; y: number }>();
+
+  topics.forEach((topic, index) => {
+    positions.set(topic.id, {
+      x,
+      y: startY + index * (NODE_HEIGHT + ROW_GAP),
+    });
+  });
+
+  return positions;
+}
+
 export function buildLearningMap(
   allTopics: Topic[],
   allRelations: TopicRelation[],
 ): { nodes: LearningMapNode[]; edges: LearningMapEdge[] } {
-  const visibleTopics = allTopics.filter((topic) => topic.status !== "inbox");
-  const visibleIds = new Set(visibleTopics.map((topic) => topic.id));
+  const inboxTopics = allTopics
+    .filter((topic) => topic.status === "inbox")
+    .toSorted((left, right) => left.title.localeCompare(right.title));
+  const curriculumTopics = allTopics.filter(
+    (topic) => topic.status !== "inbox",
+  );
+  const curriculumIds = new Set(curriculumTopics.map((topic) => topic.id));
   const visibleRelations = allRelations.filter(
     (relation) =>
-      visibleIds.has(relation.sourceTopicId) &&
-      visibleIds.has(relation.targetTopicId),
+      curriculumIds.has(relation.sourceTopicId) &&
+      curriculumIds.has(relation.targetTopicId),
   );
-  const positions = layoutTopics(visibleTopics, visibleRelations);
+  const curriculumPositions = layoutTopics(
+    curriculumTopics,
+    visibleRelations,
+  );
+  const inboxStartY =
+    curriculumPositions.size === 0
+      ? 0
+      : Math.min(
+          ...[...curriculumPositions.values()].map((position) => position.y),
+        );
+  const positions = new Map([
+    ...curriculumPositions,
+    ...layoutInboxTopics(
+      inboxTopics,
+      inboxLaneX(curriculumPositions),
+      inboxStartY,
+    ),
+  ]);
+  const visibleTopics = [...curriculumTopics, ...inboxTopics];
 
   const nodes: LearningMapNode[] = visibleTopics.map((topic) => ({
     id: topic.id,

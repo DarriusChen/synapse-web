@@ -76,6 +76,7 @@ npm test           # Run the test suite
 - `/admin/login` — Admin sign-in
 - `/admin/topics` — Topic management
 - `/admin/topics/new` — Create a topic
+- `/admin/topics/[slug]` — Edit or organize a topic
 
 ## Project Structure
 

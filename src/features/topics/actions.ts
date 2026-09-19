@@ -4,10 +4,14 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import {
+  createInboxTopic,
   createTopicWithRelations,
   updateTopicWithRelations,
 } from "@/features/topics/lib/topic-store";
-import { parseTopicWrite } from "@/features/topics/lib/topic-write";
+import {
+  parseInboxTopicWrite,
+  parseTopicWrite,
+} from "@/features/topics/lib/topic-write";
 import { assertAdmin } from "@/lib/admin-guard";
 
 export type TopicFormState = {
@@ -21,6 +25,21 @@ function revalidateTopicViews(slug: string) {
   revalidatePath("/admin/topics/new");
   revalidatePath(`/admin/topics/${slug}`);
   revalidatePath(`/topics/${slug}`);
+}
+
+export async function createInboxTopicAction(
+  _prev: TopicFormState,
+  formData: FormData,
+): Promise<TopicFormState> {
+  await assertAdmin();
+  const result = await createInboxTopic(parseInboxTopicWrite(formData));
+
+  if (!result.ok) {
+    return { error: result.error.message, field: result.error.field };
+  }
+
+  revalidateTopicViews(result.topic.slug);
+  redirect("/#learning-map");
 }
 
 export async function createTopicAction(

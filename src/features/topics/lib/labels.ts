@@ -11,7 +11,7 @@ export const topicStatusSymbols: Record<TopicStatus, string> = {
   to_learn: "○",
   learning: "◐",
   discussed: "●",
-  inbox: "·",
+  inbox: "□",
 };
 
 export const resourceTypeIcons: Record<ResourceType, string> = {

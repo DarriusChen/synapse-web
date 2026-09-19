@@ -6,10 +6,13 @@ import {
   isAdminSessionToken,
 } from "@/lib/admin-session";
 
-export async function assertAdmin() {
+export async function hasAdminSession() {
   const token = (await cookies()).get(ADMIN_COOKIE)?.value;
+  return isAdminSessionToken(token);
+}
 
-  if (!(await isAdminSessionToken(token))) {
+export async function assertAdmin() {
+  if (!(await hasAdminSession())) {
     redirect("/admin/login");
   }
 }

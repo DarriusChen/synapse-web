@@ -28,6 +28,13 @@ export type TopicWriteFields = {
   relatedIds: string[];
 };
 
+export type InboxTopicWriteFields = {
+  title: string;
+  category?: string;
+  difficulty: string;
+  shortDescription?: string;
+};
+
 export type TopicWriteError = {
   field?: string;
   message: string;
@@ -60,6 +67,17 @@ export function parseTopicWrite(formData: FormData): TopicWriteFields {
     status: String(formData.get("status") ?? ""),
     prerequisiteIds: formData.getAll("prerequisiteIds").map(String),
     relatedIds: formData.getAll("relatedIds").map(String),
+  };
+}
+
+export function parseInboxTopicWrite(
+  formData: FormData,
+): InboxTopicWriteFields {
+  return {
+    title: String(formData.get("title") ?? ""),
+    category: String(formData.get("category") ?? ""),
+    difficulty: String(formData.get("difficulty") ?? ""),
+    shortDescription: String(formData.get("shortDescription") ?? ""),
   };
 }
 
@@ -206,6 +224,23 @@ function topicFromFields(
     createdAt,
     updatedAt,
   };
+}
+
+export function applyQuickAddInbox(
+  store: TopicStoreData,
+  fields: InboxTopicWriteFields,
+  now = new Date().toISOString(),
+): TopicWriteResult {
+  return applyCreateTopic(
+    store,
+    {
+      ...fields,
+      status: "inbox",
+      prerequisiteIds: [],
+      relatedIds: [],
+    },
+    now,
+  );
 }
 
 export function applyCreateTopic(
