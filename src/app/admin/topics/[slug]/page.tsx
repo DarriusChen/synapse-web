@@ -1,3 +1,4 @@
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -35,10 +36,11 @@ export default async function EditTopicPage({ params }: EditTopicPageProps) {
 
       <section className="admin-page">
         <Link className="topic-back" href="/admin/topics">
+          <ArrowLeft size={16} aria-hidden="true" />
           Back to topics
         </Link>
         <p className="eyebrow">Topic management</p>
-        <h1>Edit {topic.title}</h1>
+        <h1>{topic.title}</h1>
         <TopicForm
           action={updateTopicAction}
           topics={store.topics}

@@ -1,3 +1,4 @@
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 import { SiteHeader } from "@/components/site-header";
@@ -20,6 +21,7 @@ export default async function NewTopicPage() {
 
       <section className="admin-page">
         <Link className="topic-back" href="/admin/topics">
+          <ArrowLeft size={16} aria-hidden="true" />
           Back to topics
         </Link>
         <p className="eyebrow">Topic management</p>
