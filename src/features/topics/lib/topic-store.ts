@@ -14,7 +14,9 @@ import {
 } from "@/features/topics/lib/topic-store-map";
 import {
   applyCreateTopic,
+  applyQuickAddInbox,
   applyUpdateTopic,
+  type InboxTopicWriteFields,
   type TopicStoreData,
   type TopicWriteFields,
 } from "@/features/topics/lib/topic-write";
@@ -84,6 +86,18 @@ async function persistTopicConnections(
 
   const insertRelations = await supabase.from("topic_relations").insert(owned);
   throwIfError("Failed to save topic relations", insertRelations.error);
+}
+
+export async function createInboxTopic(fields: InboxTopicWriteFields) {
+  const store = await readTopicStore();
+  const result = applyQuickAddInbox(store, fields);
+
+  if (!result.ok) {
+    return result;
+  }
+
+  await persistTopicConnections(result.topic, result.store.topicRelations);
+  return result;
 }
 
 export async function createTopicWithRelations(fields: TopicWriteFields) {

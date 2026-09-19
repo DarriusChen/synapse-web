@@ -273,9 +273,10 @@ Suggested visual meaning:
 ○ To Learn
 ◐ Learning
 ● Discussed
+□ Inbox
 ```
 
-`Inbox` topics should eventually be excluded from the main Learning Map until organized.
+`Inbox` topics appear on the Learning Map as unconnected nodes in a dedicated lane, visually distinct from the curriculum. They are omitted from the public topic list until organized. Connecting them on the map (drag-to-relate) is deferred.
 
 ---
 
@@ -760,6 +761,7 @@ Admin
 Quick Add
 → create incomplete topic
 → save to inbox
+→ appear on map as an unconnected node
 → organize later
 ```
 

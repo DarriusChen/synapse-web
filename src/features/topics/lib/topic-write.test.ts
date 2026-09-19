@@ -4,8 +4,10 @@ import { buildLearningMap } from "@/features/learning-map/lib/build-learning-map
 import { topicRelations, topics } from "@/features/topics/data/topics";
 import {
   applyCreateTopic,
+  applyQuickAddInbox,
   applyUpdateTopic,
   incomingPrerequisiteIds,
+  parseInboxTopicWrite,
   parseTopicWrite,
   relatedRelationId,
   slugifyTitle,
@@ -48,6 +50,23 @@ describe("parseTopicWrite", () => {
       title: "Fine-tuning",
       prerequisiteIds: ["llm"],
       relatedIds: ["rag", "agent"],
+    });
+  });
+});
+
+describe("parseInboxTopicWrite", () => {
+  it("reads the lightweight inbox fields", () => {
+    const formData = new FormData();
+    formData.set("title", "Mixture of Experts");
+    formData.set("category", "Model Architecture");
+    formData.set("difficulty", "advanced");
+    formData.set("shortDescription", "Sparse expert routing.");
+
+    expect(parseInboxTopicWrite(formData)).toEqual({
+      title: "Mixture of Experts",
+      category: "Model Architecture",
+      difficulty: "advanced",
+      shortDescription: "Sparse expert routing.",
     });
   });
 });
@@ -117,6 +136,71 @@ describe("applyCreateTopic", () => {
     expect(edgeIds).toContain(
       relatedRelationId("fine-tuning", "prompt-engineering"),
     );
+  });
+});
+
+describe("applyQuickAddInbox", () => {
+  it("rejects a missing title", () => {
+    const result = applyQuickAddInbox(seedStore, {
+      title: "  ",
+      difficulty: "beginner",
+    });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error.field).toBe("title");
+    }
+  });
+
+  it("creates an unconnected inbox topic that appears on the map", () => {
+    const result = applyQuickAddInbox(
+      seedStore,
+      {
+        title: "Mixture of Experts",
+        category: "Model Architecture",
+        difficulty: "advanced",
+        shortDescription: "Sparse expert routing.",
+      },
+      "2026-09-20T00:00:00.000Z",
+    );
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+
+    expect(result.topic).toMatchObject({
+      id: "mixture-of-experts",
+      slug: "mixture-of-experts",
+      status: "inbox",
+      category: "Model Architecture",
+      difficulty: "advanced",
+      shortDescription: "Sparse expert routing.",
+    });
+    expect(
+      result.store.topicRelations.some(
+        (relation) =>
+          relation.sourceTopicId === result.topic.id ||
+          relation.targetTopicId === result.topic.id,
+      ),
+    ).toBe(false);
+
+    const graph = buildLearningMap(result.store.topics, result.store.topicRelations);
+    const node = graph.nodes.find((item) => item.id === result.topic.id);
+    const maxCurriculumX = Math.max(
+      ...graph.nodes
+        .filter((item) => item.data.topic.status !== "inbox")
+        .map((item) => item.position.x),
+    );
+
+    expect(node).toBeDefined();
+    expect(graph.edges.some((edge) => edge.source === result.topic.id)).toBe(
+      false,
+    );
+    expect(graph.edges.some((edge) => edge.target === result.topic.id)).toBe(
+      false,
+    );
+    expect(node?.position.x).toBeGreaterThan(maxCurriculumX);
   });
 });
 

@@ -27,11 +27,16 @@ export function TopicNode({
           "topic-node",
           topic.status === "discussed" && "topic-node--discussed",
           topic.status === "to_learn" && "topic-node--to-learn",
+          topic.status === "inbox" && "topic-node--inbox",
           isCurrentArea && "topic-node--current",
           selected && "topic-node--selected",
         )}
         data-testid={`topic-node-${topic.id}`}
-        aria-label={`${topic.title}, ${topicStatusLabels[topic.status]}, ${topic.difficulty}`}
+        aria-label={
+          topic.status === "inbox"
+            ? `${topic.title}, ${topicStatusLabels[topic.status]}`
+            : `${topic.title}, ${topicStatusLabels[topic.status]}, ${topic.difficulty}`
+        }
       >
         <div className="topic-node__meta">
           <span className={`status status--${topic.status}`}>
@@ -46,10 +51,12 @@ export function TopicNode({
         <h3>{topic.title}</h3>
 
         <div className="topic-node__footer">
-          <span>{topic.category}</span>
-          <span className={`difficulty difficulty--${topic.difficulty}`}>
-            {topic.difficulty}
-          </span>
+          <span>{topic.status === "inbox" ? "Unplaced" : topic.category}</span>
+          {topic.status === "inbox" ? null : (
+            <span className={`difficulty difficulty--${topic.difficulty}`}>
+              {topic.difficulty}
+            </span>
+          )}
         </div>
       </article>
     </>

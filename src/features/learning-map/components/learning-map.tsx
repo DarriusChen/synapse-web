@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { TopicNode } from "@/features/learning-map/components/topic-node";
+import { QuickAddInboxForm } from "@/features/learning-map/components/quick-add-inbox-form";
 import {
   buildLearningMap,
   type LearningMapNode,
@@ -25,9 +26,14 @@ const nodeTypes = {
 type LearningMapProps = {
   topics: Topic[];
   topicRelations: TopicRelation[];
+  isAdmin?: boolean;
 };
 
-export function LearningMap({ topics, topicRelations }: LearningMapProps) {
+export function LearningMap({
+  topics,
+  topicRelations,
+  isAdmin = false,
+}: LearningMapProps) {
   const router = useRouter();
   const graph = useMemo(
     () => buildLearningMap(topics, topicRelations),
@@ -45,6 +51,9 @@ export function LearningMap({ topics, topicRelations }: LearningMapProps) {
   );
 
   const selectedTopic = topics.find((topic) => topic.id === selectedTopicId);
+  const inboxCount = topics.filter(
+    (topic) => topic.status === "inbox",
+  ).length;
 
   const openTopic = useCallback(
     (slug: string) => {
@@ -87,15 +96,18 @@ export function LearningMap({ topics, topicRelations }: LearningMapProps) {
           <h2 id="learning-map-title">Follow the ideas, not a syllabus.</h2>
         </div>
 
-        <div className="relation-legend" aria-label="Relationship legend">
-          <span>
-            <i className="legend-line legend-line--arrow" aria-hidden="true" />
-            Prerequisite
-          </span>
-          <span>
-            <i className="legend-line legend-line--related" aria-hidden="true" />
-            Related
-          </span>
+        <div className="map-toolbar__aside">
+          <div className="relation-legend" aria-label="Relationship legend">
+            <span>
+              <i className="legend-line legend-line--arrow" aria-hidden="true" />
+              Prerequisite
+            </span>
+            <span>
+              <i className="legend-line legend-line--related" aria-hidden="true" />
+              Related
+            </span>
+          </div>
+          {isAdmin ? <QuickAddInboxForm inboxCount={inboxCount} /> : null}
         </div>
       </div>
 
@@ -142,7 +154,9 @@ export function LearningMap({ topics, topicRelations }: LearningMapProps) {
           </strong>
           <span className="map-selection__meta">
             {selectedTopic
-              ? `${selectedTopic.category} · ${selectedTopic.difficulty}`
+              ? selectedTopic.status === "inbox"
+                ? "Inbox · not connected yet"
+                : `${selectedTopic.category} · ${selectedTopic.difficulty}`
               : "Click any node to focus it"}
           </span>
           {selectedTopic ? (
