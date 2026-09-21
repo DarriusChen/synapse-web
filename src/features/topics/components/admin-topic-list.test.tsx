@@ -47,6 +47,9 @@ describe("AdminTopicList", () => {
       />,
     );
 
+    expect(screen.getByText("Status")).toBeInTheDocument();
+    expect(screen.getByText("Level")).toBeInTheDocument();
+    expect(screen.getByText("Connections")).toBeInTheDocument();
     expect(screen.getByTestId("reset-to-learn-rag")).toBeInTheDocument();
     expect(screen.getByTestId("admin-topic-rag")).toHaveAttribute("title", "RAG");
     expect(

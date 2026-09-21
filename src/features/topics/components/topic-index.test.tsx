@@ -26,6 +26,9 @@ describe("TopicIndex", () => {
       "/topics/rag?from=topics",
     );
     expect(screen.getByTestId("topic-index-rag")).toHaveAttribute("title", "RAG");
+    expect(screen.getByText("Status")).toBeInTheDocument();
+    expect(screen.getByText("Level")).toBeInTheDocument();
+    expect(screen.getByText("Category")).toBeInTheDocument();
     expect(screen.queryByText("New topic")).not.toBeInTheDocument();
   });
 

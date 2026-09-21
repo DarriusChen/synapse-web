@@ -18,29 +18,37 @@ export function TopicIndex({ topics }: TopicIndexProps) {
       {topics.length === 0 ? (
         <p className="hero__description">No topics to browse yet.</p>
       ) : (
-        <ul className="topic-list">
-          {topics.map((topic) => (
-            <li key={topic.id}>
-              <Link
-                href={`/topics/${topic.slug}?from=topics`}
-                title={topic.title}
-                data-testid={`topic-index-${topic.slug}`}
-              >
-                <strong>{topic.title}</strong>
-                <span className={`status status--${topic.status}`}>
-                  <span aria-hidden="true">
-                    {topicStatusSymbols[topic.status]}
+        <div className="topic-list-wrap">
+          <div className="topic-columns topic-columns--topics">
+            <span>Title</span>
+            <span>Status</span>
+            <span>Level</span>
+            <span>Category</span>
+          </div>
+          <ul className="topic-list">
+            {topics.map((topic) => (
+              <li key={topic.id}>
+                <Link
+                  href={`/topics/${topic.slug}?from=topics`}
+                  title={topic.title}
+                  data-testid={`topic-index-${topic.slug}`}
+                >
+                  <strong>{topic.title}</strong>
+                  <span className={`status status--${topic.status}`}>
+                    <span aria-hidden="true">
+                      {topicStatusSymbols[topic.status]}
+                    </span>
+                    {topicStatusLabels[topic.status]}
                   </span>
-                  {topicStatusLabels[topic.status]}
-                </span>
-                <span className={`difficulty difficulty--${topic.difficulty}`}>
-                  {topic.difficulty}
-                </span>
-                <span>{topic.category ?? "Uncategorized"}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+                  <span className={`difficulty difficulty--${topic.difficulty}`}>
+                    {topic.difficulty}
+                  </span>
+                  <span>{topic.category ?? "Uncategorized"}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </section>
   );

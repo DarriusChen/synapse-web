@@ -23,40 +23,49 @@ export function AdminTopicList({
   actionLabel,
 }: AdminTopicListProps) {
   return (
-    <ul className="admin-topic-list">
-      {topics.map((topic) => (
-        <li key={topic.id}>
-          <div className="admin-topic-list__item">
-            <Link
-              className="admin-topic-list__hit"
-              href={`/admin/topics/${topic.slug}`}
-              title={topic.title}
-              data-testid={`admin-topic-${topic.slug}`}
-            >
-              <span className="sr-only">{actionLabel} {topic.title}</span>
-            </Link>
-            <strong>{topic.title}</strong>
-            <span className="admin-topic-list__status">
-              <span className="admin-topic-list__status-label">
-                {topicStatusSymbols[topic.status]}{" "}
-                {topicStatusLabels[topic.status]}
+    <div>
+      <div className="topic-columns topic-columns--admin">
+        <span>Title</span>
+        <span>Status</span>
+        <span>Level</span>
+        <span>Connections</span>
+        <span className="topic-columns__action" />
+      </div>
+      <ul className="admin-topic-list">
+        {topics.map((topic) => (
+          <li key={topic.id}>
+            <div className="admin-topic-list__item">
+              <Link
+                className="admin-topic-list__hit"
+                href={`/admin/topics/${topic.slug}`}
+                title={topic.title}
+                data-testid={`admin-topic-${topic.slug}`}
+              >
+                <span className="sr-only">{actionLabel} {topic.title}</span>
+              </Link>
+              <strong>{topic.title}</strong>
+              <span className="admin-topic-list__status">
+                <span className="admin-topic-list__status-label">
+                  {topicStatusSymbols[topic.status]}{" "}
+                  {topicStatusLabels[topic.status]}
+                </span>
+                {canResetTopicStatusToLearn(topic.status) ? (
+                  <ResetToLearnMenu
+                    topicId={topic.id}
+                    topicSlug={topic.slug}
+                    topicTitle={topic.title}
+                  />
+                ) : (
+                  <span className="admin-topic-list__status-mark" aria-hidden="true" />
+                )}
               </span>
-              {canResetTopicStatusToLearn(topic.status) ? (
-                <ResetToLearnMenu
-                  topicId={topic.id}
-                  topicSlug={topic.slug}
-                  topicTitle={topic.title}
-                />
-              ) : (
-                <span className="admin-topic-list__status-mark" aria-hidden="true" />
-              )}
-            </span>
-            <span className="difficulty">{topic.difficulty}</span>
-            <span>{connectionCount(relations, topic.id)} connections</span>
-            <span className="admin-topic-list__action">{actionLabel}</span>
-          </div>
-        </li>
-      ))}
-    </ul>
+              <span className="difficulty">{topic.difficulty}</span>
+              <span>{connectionCount(relations, topic.id)} connections</span>
+              <span className="admin-topic-list__action">{actionLabel}</span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
