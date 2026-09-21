@@ -15,6 +15,7 @@ import {
 import {
   applyCreateTopic,
   applyQuickAddInbox,
+  applyResetTopicStatusToLearn,
   applyUpdateTopic,
   type InboxTopicWriteFields,
   type TopicStoreData,
@@ -124,5 +125,21 @@ export async function updateTopicWithRelations(
   }
 
   await persistTopicConnections(result.topic, result.store.topicRelations);
+  return result;
+}
+
+export async function resetTopicStatusToLearn(topicId: string) {
+  const store = await readTopicStore();
+  const result = applyResetTopicStatusToLearn(store, topicId);
+
+  if (!result.ok) {
+    return result;
+  }
+
+  const supabase = createSupabaseServerClient();
+  const upsertTopic = await supabase
+    .from("topics")
+    .upsert(topicToRow(result.topic), { onConflict: "id" });
+  throwIfError("Failed to save topic", upsertTopic.error);
   return result;
 }

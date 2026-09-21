@@ -348,6 +348,47 @@ export function applyUpdateTopic(
   };
 }
 
+export function canResetTopicStatusToLearn(status: TopicStatus) {
+  return status === "learning" || status === "discussed";
+}
+
+export function applyResetTopicStatusToLearn(
+  store: TopicStoreData,
+  topicId: string,
+  now = new Date().toISOString(),
+): TopicWriteResult {
+  const current = store.topics.find((topic) => topic.id === topicId);
+
+  if (!current) {
+    return { ok: false, error: { message: "Topic not found." } };
+  }
+
+  if (current.status === "inbox") {
+    return {
+      ok: false,
+      error: {
+        field: "status",
+        message: "Organize inbox topics before changing their status.",
+      },
+    };
+  }
+
+  if (current.status === "to_learn") {
+    return { ok: true, topic: current, store };
+  }
+
+  const topic = { ...current, status: "to_learn" as const, updatedAt: now };
+
+  return {
+    ok: true,
+    topic,
+    store: {
+      ...store,
+      topics: store.topics.map((item) => (item.id === topicId ? topic : item)),
+    },
+  };
+}
+
 export function incomingPrerequisiteIds(
   relations: TopicRelation[],
   topicId: string,

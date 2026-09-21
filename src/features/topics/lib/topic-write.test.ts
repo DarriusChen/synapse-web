@@ -5,6 +5,7 @@ import { topicRelations, topics } from "@/features/topics/data/topics";
 import {
   applyCreateTopic,
   applyQuickAddInbox,
+  applyResetTopicStatusToLearn,
   applyUpdateTopic,
   incomingPrerequisiteIds,
   parseInboxTopicWrite,
@@ -242,5 +243,50 @@ describe("applyUpdateTopic", () => {
           [relation.sourceTopicId, relation.targetTopicId].includes("rag"),
       ),
     ).toBe(true);
+  });
+});
+
+describe("applyResetTopicStatusToLearn", () => {
+  it("resets discussed topics without changing connections", () => {
+    const before = seedStore.topicRelations.filter(
+      (relation) =>
+        relation.sourceTopicId === "llm" || relation.targetTopicId === "llm",
+    );
+    const result = applyResetTopicStatusToLearn(
+      seedStore,
+      "llm",
+      "2026-09-21T00:00:00.000Z",
+    );
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+
+    expect(result.topic.status).toBe("to_learn");
+    expect(result.topic.updatedAt).toBe("2026-09-21T00:00:00.000Z");
+    expect(
+      result.store.topicRelations.filter(
+        (relation) =>
+          relation.sourceTopicId === "llm" || relation.targetTopicId === "llm",
+      ),
+    ).toEqual(before);
+  });
+
+  it("rejects inbox topics", () => {
+    const store: TopicStoreData = {
+      ...seedStore,
+      topics: seedStore.topics.map((topic) =>
+        topic.id === "llm" ? { ...topic, status: "inbox" } : topic,
+      ),
+    };
+    const result = applyResetTopicStatusToLearn(store, "llm");
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+
+    expect(result.error.field).toBe("status");
   });
 });

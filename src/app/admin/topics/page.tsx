@@ -2,55 +2,11 @@ import Link from "next/link";
 
 import { SiteHeader } from "@/components/site-header";
 import { logoutAdminAction } from "@/features/admin/actions";
-import {
-  topicStatusLabels,
-  topicStatusSymbols,
-} from "@/features/topics/lib/labels";
+import { AdminTopicList } from "@/features/topics/components/admin-topic-list";
 import { getVisibleTopicCount } from "@/features/topics/lib/topic-detail";
 import { readTopicStore } from "@/features/topics/lib/topic-store";
-import { connectionCount } from "@/features/topics/lib/topic-write";
-import type {
-  Topic,
-  TopicRelation,
-} from "@/features/topics/types";
 
 export const dynamic = "force-dynamic";
-
-function AdminTopicList({
-  topics,
-  relations,
-  actionLabel,
-}: {
-  topics: Topic[];
-  relations: TopicRelation[];
-  actionLabel: "Organize" | "Edit";
-}) {
-  return (
-    <ul className="admin-topic-list">
-      {topics.map((topic) => (
-        <li key={topic.id}>
-          <Link
-            href={`/admin/topics/${topic.slug}`}
-            data-testid={`admin-topic-${topic.slug}`}
-          >
-            <strong>{topic.title}</strong>
-            <span>
-              {topicStatusSymbols[topic.status]}{" "}
-              {topicStatusLabels[topic.status]}
-            </span>
-            <span className="difficulty">{topic.difficulty}</span>
-            <span>
-              {connectionCount(relations, topic.id)} connections
-            </span>
-            <span className="admin-topic-list__action">
-              {actionLabel}
-            </span>
-          </Link>
-        </li>
-      ))}
-    </ul>
-  );
-}
 
 export default async function AdminTopicsPage() {
   const store = await readTopicStore();

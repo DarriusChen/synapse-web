@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import {
   createInboxTopic,
   createTopicWithRelations,
+  resetTopicStatusToLearn,
   updateTopicWithRelations,
 } from "@/features/topics/lib/topic-store";
 import {
@@ -70,6 +71,19 @@ export async function updateTopicAction(
 
   if (!result.ok) {
     return { error: result.error.message, field: result.error.field };
+  }
+
+  revalidateTopicViews(result.topic.slug);
+  redirect("/admin/topics");
+}
+
+export async function resetTopicStatusToLearnAction(formData: FormData) {
+  await assertAdmin();
+  const topicId = String(formData.get("topicId") ?? "");
+  const result = await resetTopicStatusToLearn(topicId);
+
+  if (!result.ok) {
+    throw new Error(result.error.message);
   }
 
   revalidateTopicViews(result.topic.slug);
