@@ -23,6 +23,7 @@ export function TopicIndex({ topics }: TopicIndexProps) {
             <li key={topic.id}>
               <Link
                 href={`/topics/${topic.slug}?from=topics`}
+                title={topic.title}
                 data-testid={`topic-index-${topic.slug}`}
               >
                 <strong>{topic.title}</strong>

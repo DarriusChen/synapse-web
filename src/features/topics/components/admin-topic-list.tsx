@@ -30,6 +30,7 @@ export function AdminTopicList({
             <Link
               className="admin-topic-list__hit"
               href={`/admin/topics/${topic.slug}`}
+              title={topic.title}
               data-testid={`admin-topic-${topic.slug}`}
             >
               <span className="sr-only">{actionLabel} {topic.title}</span>

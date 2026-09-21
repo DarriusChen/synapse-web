@@ -25,6 +25,7 @@ describe("TopicIndex", () => {
       "href",
       "/topics/rag?from=topics",
     );
+    expect(screen.getByTestId("topic-index-rag")).toHaveAttribute("title", "RAG");
     expect(screen.queryByText("New topic")).not.toBeInTheDocument();
   });
 

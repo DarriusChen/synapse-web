@@ -1094,10 +1094,14 @@ button.admin-page__action {
 }
 
 .admin-topic-list strong {
+  min-width: 0;
+  overflow: hidden;
   color: var(--foreground);
   font-size: 15px;
   font-weight: 620;
   letter-spacing: -0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .admin-topic-list__status {
@@ -1237,10 +1241,14 @@ button.admin-page__action {
 }
 
 .topic-list strong {
+  min-width: 0;
+  overflow: hidden;
   color: var(--foreground);
   font-size: 15px;
   font-weight: 620;
   letter-spacing: -0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .topic-list a:hover {
@@ -1515,6 +1523,13 @@ button.admin-page__action {
   .topic-list a {
     grid-template-columns: 1fr;
     gap: 4px;
+  }
+
+  .admin-topic-list strong,
+  .topic-list strong {
+    overflow: visible;
+    text-overflow: unset;
+    white-space: normal;
   }
 
   .topic-form__row,

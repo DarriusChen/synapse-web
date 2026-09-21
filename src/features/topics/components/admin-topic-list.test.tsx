@@ -48,6 +48,7 @@ describe("AdminTopicList", () => {
     );
 
     expect(screen.getByTestId("reset-to-learn-rag")).toBeInTheDocument();
+    expect(screen.getByTestId("admin-topic-rag")).toHaveAttribute("title", "RAG");
     expect(
       screen.queryByRole("button", { name: "Mark as To Learn" }),
     ).not.toBeInTheDocument();
