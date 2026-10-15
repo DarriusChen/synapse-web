@@ -5,6 +5,7 @@ import { AdminTopicList } from "@/features/topics/components/admin-topic-list";
 import type { Topic } from "@/features/topics/types";
 
 vi.mock("@/features/topics/actions", () => ({
+  deleteInboxTopicAction: vi.fn(),
   resetTopicStatusToLearnAction: vi.fn(),
 }));
 
@@ -59,6 +60,9 @@ describe("AdminTopicList", () => {
       screen.queryByTestId("reset-to-learn-mixture-of-experts"),
     ).not.toBeInTheDocument();
     expect(
+      screen.getByTestId("delete-inbox-mixture-of-experts"),
+    ).toBeInTheDocument();
+    expect(
       screen.queryByTestId("reset-to-learn-prompt-engineering"),
     ).not.toBeInTheDocument();
 
@@ -73,5 +77,9 @@ describe("AdminTopicList", () => {
     expect(
       screen.queryByRole("button", { name: "Mark as To Learn" }),
     ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("delete-inbox-mixture-of-experts"));
+
+    expect(screen.getByRole("button", { name: "Delete" })).toBeVisible();
   });
 });

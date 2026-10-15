@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { DeleteInboxTopicMenu } from "@/features/topics/components/delete-inbox-topic";
 import { ResetToLearnMenu } from "@/features/topics/components/reset-to-learn-button";
 import {
   topicStatusLabels,
@@ -51,6 +52,12 @@ export function AdminTopicList({
                 </span>
                 {canResetTopicStatusToLearn(topic.status) ? (
                   <ResetToLearnMenu
+                    topicId={topic.id}
+                    topicSlug={topic.slug}
+                    topicTitle={topic.title}
+                  />
+                ) : topic.status === "inbox" ? (
+                  <DeleteInboxTopicMenu
                     topicId={topic.id}
                     topicSlug={topic.slug}
                     topicTitle={topic.title}

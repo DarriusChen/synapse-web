@@ -1234,6 +1234,36 @@ button.admin-page__action {
   color: var(--accent);
 }
 
+.admin-topic-status-menu form button.admin-topic-status-menu__danger:hover {
+  background: #f8e8e4;
+  color: #8a3a2a;
+}
+
+.topic-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.topic-delete button {
+  height: 42px;
+  padding: 0 18px;
+  border: 1px solid #e4cfc9;
+  border-radius: 999px;
+  background: #f8e8e4;
+  color: #8a3a2a;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.topic-delete button:hover {
+  border-color: #8a3a2a;
+}
+
 .topic-index {
   width: min(860px, calc(100% - var(--page-gutter) * 2));
   margin: 0 auto;
@@ -1286,10 +1316,13 @@ button.admin-page__action {
   border-color: var(--border-strong);
 }
 
+.topic-form-layout {
+  margin-top: 28px;
+}
+
 .topic-form {
   display: grid;
   gap: 18px;
-  margin-top: 28px;
 }
 
 .topic-form__error {

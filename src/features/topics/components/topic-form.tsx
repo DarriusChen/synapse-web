@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useId, type ReactNode } from "react";
 
 import { topicStatusLabels } from "@/features/topics/lib/labels";
 import type { TopicFormState } from "@/features/topics/actions";
@@ -17,6 +17,7 @@ type TopicFormProps = {
   selectedPrerequisiteIds?: string[];
   selectedRelatedIds?: string[];
   submitLabel: string;
+  actions?: ReactNode;
 };
 
 export function TopicForm({
@@ -162,9 +163,18 @@ export function TopicForm({
         </div>
       </fieldset>
 
-      <button className="topic-form__submit" type="submit" disabled={pending}>
+    </form>
+    <div className="topic-form-actions">
+      <button
+        className="topic-form__submit"
+        type="submit"
+        form={formId}
+        disabled={pending}
+      >
         {pending ? "Saving…" : submitLabel}
       </button>
-    </form>
+      {actions}
+    </div>
+    </div>
   );
 }

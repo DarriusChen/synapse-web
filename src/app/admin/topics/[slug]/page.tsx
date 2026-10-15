@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { SiteHeader } from "@/components/site-header";
 import { updateTopicAction } from "@/features/topics/actions";
+import { DeleteInboxTopicButton } from "@/features/topics/components/delete-inbox-topic";
 import { TopicForm } from "@/features/topics/components/topic-form";
 import { getTopicBySlug, getVisibleTopicCount } from "@/features/topics/lib/topic-detail";
 import { readTopicStore } from "@/features/topics/lib/topic-store";
@@ -51,6 +52,16 @@ export default async function EditTopicPage({ params }: EditTopicPageProps) {
           )}
           selectedRelatedIds={relatedTopicIds(store.topicRelations, topic.id)}
           submitLabel="Save changes"
+          actions={
+            topic.status === "inbox" ? (
+              <DeleteInboxTopicButton
+                key={topic.id}
+                topicId={topic.id}
+                topicSlug={topic.slug}
+                topicTitle={topic.title}
+              />
+            ) : null
+          }
         />
       </section>
     </main>
