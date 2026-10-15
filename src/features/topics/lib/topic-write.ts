@@ -46,14 +46,47 @@ export type TopicWriteResult =
 
 const DEFAULT_STATUS: TopicStatus = "to_learn";
 
-export function slugifyTitle(title: string) {
-  return title
+function asciiSlug(value: string) {
+  return value
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, "-")
+    .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
+}
+
+function shortHash(value: string) {
+  let hash = 2166136261;
+
+  for (const char of value) {
+    hash ^= char.codePointAt(0) ?? 0;
+    hash = Math.imul(hash, 16777619);
+  }
+
+  return (hash >>> 0).toString(36);
+}
+
+export function slugifyTitle(title: string) {
+  const trimmed = title.trim();
+
+  if (!trimmed) {
+    return "";
+  }
+
+  const ascii = asciiSlug(trimmed);
+
+  if (ascii && !/[^\u0000-\u007f]/.test(trimmed)) {
+    return ascii;
+  }
+
+  const suffix = `-${shortHash(trimmed)}`;
+
+  if (!ascii) {
+    return `topic${suffix}`;
+  }
+
+  return `${ascii.slice(0, 80 - suffix.length)}${suffix}`;
 }
 
 export function parseTopicWrite(formData: FormData): TopicWriteFields {

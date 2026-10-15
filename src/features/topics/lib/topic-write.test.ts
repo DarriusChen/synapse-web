@@ -37,9 +37,13 @@ describe("slugifyTitle", () => {
     expect(slugifyTitle("Fine-tuning & LoRA")).toBe("fine-tuning-lora");
   });
 
-  it("keeps Chinese characters so a CJK title still produces a slug", () => {
-    expect(slugifyTitle("注意力機制")).toBe("注意力機制");
-    expect(slugifyTitle("RAG 檢索增強生成")).toBe("rag-檢索增強生成");
+  it("builds an ASCII slug when the title is Chinese", () => {
+    const slug = slugifyTitle("注意力機制");
+
+    expect(slug).toMatch(/^topic-[a-z0-9]+$/);
+    expect(slugifyTitle("注意力機制")).toBe(slug);
+    expect(slugifyTitle("軟體專案架構：前後端與資料庫")).toMatch(/^topic-[a-z0-9]+$/);
+    expect(slugifyTitle("RAG 檢索增強生成")).toMatch(/^rag-[a-z0-9]+$/);
   });
 });
 
@@ -169,8 +173,9 @@ describe("applyQuickAddInbox", () => {
       return;
     }
 
-    expect(result.topic.slug).toBe("注意力機制");
-    expect(result.topic.id).toBe("注意力機制");
+    expect(result.topic.slug).toBe(slugifyTitle("注意力機制"));
+    expect(result.topic.id).toBe(result.topic.slug);
+    expect(result.topic.slug).toMatch(/^topic-[a-z0-9]+$/);
   });
 
   it("creates an unconnected inbox topic that appears on the map", () => {
