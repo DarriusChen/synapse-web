@@ -26,14 +26,24 @@ export function TopicForm({
   selectedPrerequisiteIds = [],
   selectedRelatedIds = [],
   submitLabel,
+  actions,
 }: TopicFormProps) {
+  const formId = useId();
   const [state, formAction, pending] = useActionState(action, null);
   const neighbors = topics
     .filter((item) => item.id !== topic?.id)
-    .toSorted((left, right) => left.title.localeCompare(right.title));
+    .toSorted((left, right) =>
+      left.title < right.title ? -1 : left.title > right.title ? 1 : 0,
+    );
 
   return (
-    <form className="topic-form" action={formAction} data-testid="topic-form">
+    <div className="topic-form-layout">
+    <form
+      id={formId}
+      className="topic-form"
+      action={formAction}
+      data-testid="topic-form"
+    >
       {topic ? <input type="hidden" name="topicId" value={topic.id} /> : null}
 
       {state?.error ? (
