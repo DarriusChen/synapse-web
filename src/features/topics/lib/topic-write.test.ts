@@ -4,6 +4,7 @@ import { buildLearningMap } from "@/features/learning-map/lib/build-learning-map
 import { topicRelations, topics } from "@/features/topics/data/topics";
 import {
   applyCreateTopic,
+  applyDeleteInboxTopic,
   applyQuickAddInbox,
   applyResetTopicStatusToLearn,
   applyUpdateTopic,
@@ -306,6 +307,52 @@ describe("applyResetTopicStatusToLearn", () => {
       ),
     };
     const result = applyResetTopicStatusToLearn(store, "llm");
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+
+    expect(result.error.field).toBe("status");
+  });
+});
+
+describe("applyDeleteInboxTopic", () => {
+  it("removes an inbox topic and anything connected to it", () => {
+    const store: TopicStoreData = {
+      ...seedStore,
+      topics: seedStore.topics.map((topic) =>
+        topic.id === "llm" ? { ...topic, status: "inbox" } : topic,
+      ),
+      resources: [
+        {
+          id: "llm-note",
+          topicId: "llm",
+          title: "Notes",
+          url: "https://example.com",
+          type: "notes",
+        },
+      ],
+    };
+    const result = applyDeleteInboxTopic(store, "llm");
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+
+    expect(result.store.topics.some((topic) => topic.id === "llm")).toBe(false);
+    expect(
+      result.store.topicRelations.some(
+        (relation) =>
+          relation.sourceTopicId === "llm" || relation.targetTopicId === "llm",
+      ),
+    ).toBe(false);
+    expect(result.store.resources).toEqual([]);
+  });
+
+  it("rejects curriculum topics", () => {
+    const result = applyDeleteInboxTopic(seedStore, "llm");
 
     expect(result.ok).toBe(false);
     if (result.ok) {

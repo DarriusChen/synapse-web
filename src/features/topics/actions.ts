@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import {
   createInboxTopic,
   createTopicWithRelations,
+  deleteInboxTopic,
   resetTopicStatusToLearn,
   updateTopicWithRelations,
 } from "@/features/topics/lib/topic-store";
@@ -81,6 +82,19 @@ export async function resetTopicStatusToLearnAction(formData: FormData) {
   await assertAdmin();
   const topicId = String(formData.get("topicId") ?? "");
   const result = await resetTopicStatusToLearn(topicId);
+
+  if (!result.ok) {
+    throw new Error(result.error.message);
+  }
+
+  revalidateTopicViews(result.topic.slug);
+  redirect("/admin/topics");
+}
+
+export async function deleteInboxTopicAction(formData: FormData) {
+  await assertAdmin();
+  const topicId = String(formData.get("topicId") ?? "");
+  const result = await deleteInboxTopic(topicId);
 
   if (!result.ok) {
     throw new Error(result.error.message);

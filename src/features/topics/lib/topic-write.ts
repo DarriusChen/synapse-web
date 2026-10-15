@@ -422,6 +422,44 @@ export function applyResetTopicStatusToLearn(
   };
 }
 
+export function applyDeleteInboxTopic(
+  store: TopicStoreData,
+  topicId: string,
+): TopicWriteResult {
+  const current = store.topics.find((topic) => topic.id === topicId);
+
+  if (!current) {
+    return { ok: false, error: { message: "Topic not found." } };
+  }
+
+  if (current.status !== "inbox") {
+    return {
+      ok: false,
+      error: {
+        field: "status",
+        message: "Only inbox topics can be deleted.",
+      },
+    };
+  }
+
+  return {
+    ok: true,
+    topic: current,
+    store: {
+      ...store,
+      topics: store.topics.filter((topic) => topic.id !== topicId),
+      topicRelations: store.topicRelations.filter(
+        (relation) =>
+          relation.sourceTopicId !== topicId &&
+          relation.targetTopicId !== topicId,
+      ),
+      resources: store.resources.filter(
+        (resource) => resource.topicId !== topicId,
+      ),
+    },
+  };
+}
+
 export function incomingPrerequisiteIds(
   relations: TopicRelation[],
   topicId: string,

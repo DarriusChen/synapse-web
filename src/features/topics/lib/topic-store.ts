@@ -14,6 +14,7 @@ import {
 } from "@/features/topics/lib/topic-store-map";
 import {
   applyCreateTopic,
+  applyDeleteInboxTopic,
   applyQuickAddInbox,
   applyResetTopicStatusToLearn,
   applyUpdateTopic,
@@ -141,5 +142,19 @@ export async function resetTopicStatusToLearn(topicId: string) {
     .from("topics")
     .upsert(topicToRow(result.topic), { onConflict: "id" });
   throwIfError("Failed to save topic", upsertTopic.error);
+  return result;
+}
+
+export async function deleteInboxTopic(topicId: string) {
+  const store = await readTopicStore();
+  const result = applyDeleteInboxTopic(store, topicId);
+
+  if (!result.ok) {
+    return result;
+  }
+
+  const supabase = createSupabaseServerClient();
+  const deleted = await supabase.from("topics").delete().eq("id", topicId);
+  throwIfError("Failed to delete topic", deleted.error);
   return result;
 }
