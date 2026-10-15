@@ -36,6 +36,11 @@ describe("slugifyTitle", () => {
   it("builds a URL-safe slug from a title", () => {
     expect(slugifyTitle("Fine-tuning & LoRA")).toBe("fine-tuning-lora");
   });
+
+  it("keeps Chinese characters so a CJK title still produces a slug", () => {
+    expect(slugifyTitle("注意力機制")).toBe("注意力機制");
+    expect(slugifyTitle("RAG 檢索增強生成")).toBe("rag-檢索增強生成");
+  });
 });
 
 describe("parseTopicWrite", () => {
@@ -151,6 +156,21 @@ describe("applyQuickAddInbox", () => {
     if (!result.ok) {
       expect(result.error.field).toBe("title");
     }
+  });
+
+  it("creates an inbox topic from a Chinese title", () => {
+    const result = applyQuickAddInbox(seedStore, {
+      title: "注意力機制",
+      difficulty: "beginner",
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+
+    expect(result.topic.slug).toBe("注意力機制");
+    expect(result.topic.id).toBe("注意力機制");
   });
 
   it("creates an unconnected inbox topic that appears on the map", () => {
