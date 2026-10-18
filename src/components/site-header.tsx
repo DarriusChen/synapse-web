@@ -1,6 +1,6 @@
-import { Network } from "lucide-react";
 import Link from "next/link";
 
+import { SynapseMark } from "@/components/synapse-mark";
 import { cn } from "@/lib/utils";
 
 type SiteHeaderProps = {
@@ -12,8 +12,8 @@ export function SiteHeader({ active, visibleTopicCount }: SiteHeaderProps) {
   return (
     <header className="site-header">
       <Link className="brand" href="/" aria-label="Synapse home">
-        <span className="brand__mark" aria-hidden="true">
-          <Network size={18} strokeWidth={1.8} />
+        <span className="brand__mark">
+          <SynapseMark size={34} />
         </span>
         <span>Synapse</span>
       </Link>

@@ -79,14 +79,9 @@ main {
 }
 
 .brand__mark {
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  color: var(--accent);
-  border: 1px solid var(--border-strong);
-  border-radius: 9px;
-  background: rgb(255 255 255 / 52%);
+  display: block;
+  flex-shrink: 0;
+  line-height: 0;
 }
 
 .site-header nav {
