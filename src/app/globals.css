@@ -560,6 +560,11 @@ main {
   min-height: 570px;
 }
 
+.map-canvas__pending {
+  position: absolute;
+  inset: 0;
+}
+
 .react-flow {
   background: var(--surface);
 }
