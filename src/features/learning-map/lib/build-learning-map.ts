@@ -36,6 +36,26 @@ const HANDLE = {
   toBottom: "to-bottom",
 } as const;
 
+/** UTF-16 code unit order. Stable in Node and browsers, unlike default localeCompare. */
+function compareCodePoints(left: string, right: string) {
+  if (left < right) {
+    return -1;
+  }
+
+  if (left > right) {
+    return 1;
+  }
+
+  return 0;
+}
+
+function compareTopicsByTitle(left: Topic, right: Topic) {
+  return (
+    compareCodePoints(left.title, right.title) ||
+    compareCodePoints(left.id, right.id)
+  );
+}
+
 function median(values: number[]) {
   const sorted = [...values].toSorted((a, b) => a - b);
   const middle = Math.floor(sorted.length / 2);
@@ -142,8 +162,10 @@ function barycenterOrder(
   for (const [column, ids] of order) {
     order.set(
       column,
-      ids.toSorted((a, b) =>
-        (titles.get(a) ?? a).localeCompare(titles.get(b) ?? b),
+      ids.toSorted(
+        (a, b) =>
+          compareCodePoints(titles.get(a) ?? a, titles.get(b) ?? b) ||
+          compareCodePoints(a, b),
       ),
     );
   }
@@ -283,9 +305,7 @@ function layoutTopics(topics: Topic[], relations: TopicRelation[]) {
       NODE_HEIGHT -
       SATELLITE_GAP;
 
-    group
-      .toSorted((a, b) => a.title.localeCompare(b.title))
-      .forEach((topic, index) => {
+    group.toSorted(compareTopicsByTitle).forEach((topic, index) => {
         positions.set(topic.id, {
           x: xFor(column),
           y: baseY - index * (NODE_HEIGHT + ROW_GAP),
@@ -366,7 +386,7 @@ export function buildLearningMap(
 ): { nodes: LearningMapNode[]; edges: LearningMapEdge[] } {
   const inboxTopics = allTopics
     .filter((topic) => topic.status === "inbox")
-    .toSorted((left, right) => left.title.localeCompare(right.title));
+    .toSorted(compareTopicsByTitle);
   const curriculumTopics = allTopics.filter(
     (topic) => topic.status !== "inbox",
   );

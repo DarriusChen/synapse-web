@@ -27,6 +27,33 @@ describe("buildLearningMap", () => {
     });
   });
 
+  it("orders inbox topics by title code points, not by slug", () => {
+    const earlier: Topic = {
+      id: "topic-zzzz",
+      slug: "topic-zzzz",
+      title: "乙",
+      difficulty: "beginner",
+      status: "inbox",
+      createdAt: "2026-09-10T00:00:00.000Z",
+      updatedAt: "2026-09-10T00:00:00.000Z",
+    };
+    const later: Topic = {
+      id: "topic-aaaa",
+      slug: "topic-aaaa",
+      title: "甲",
+      difficulty: "beginner",
+      status: "inbox",
+      createdAt: "2026-09-10T00:00:00.000Z",
+      updatedAt: "2026-09-10T00:00:00.000Z",
+    };
+
+    const graph = buildLearningMap([earlier, later], []);
+    const earlierNode = graph.nodes.find((node) => node.id === earlier.id);
+    const laterNode = graph.nodes.find((node) => node.id === later.id);
+
+    expect(earlierNode?.position.y).toBeLessThan(laterNode?.position.y ?? 0);
+  });
+
   it("shows inbox topics without edges, parked to the right of the curriculum", () => {
     const inboxTopic: Topic = {
       id: "future-topic",
