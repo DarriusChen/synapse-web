@@ -94,6 +94,16 @@ export function resourceFromRow(row: ResourceRow): Resource {
   };
 }
 
+export function resourceToRow(resource: Resource): ResourceRow {
+  return {
+    id: resource.id,
+    topic_id: resource.topicId,
+    title: resource.title,
+    url: resource.url,
+    type: resource.type,
+  };
+}
+
 export function topicOwnedRelations(
   relations: TopicRelation[],
   topicId: string,

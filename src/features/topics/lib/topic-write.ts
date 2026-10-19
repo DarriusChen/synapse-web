@@ -1,11 +1,13 @@
 import type {
   Resource,
+  ResourceType,
   Topic,
   TopicDifficulty,
   TopicRelation,
   TopicStatus,
 } from "@/features/topics/types";
 import {
+  resourceTypes,
   topicDifficulties,
   topicStatuses,
 } from "@/features/topics/types";
@@ -35,6 +37,13 @@ export type InboxTopicWriteFields = {
   shortDescription?: string;
 };
 
+export type ResourceWriteFields = {
+  topicId: string;
+  title: string;
+  url: string;
+  type: string;
+};
+
 export type TopicWriteError = {
   field?: string;
   message: string;
@@ -42,6 +51,10 @@ export type TopicWriteError = {
 
 export type TopicWriteResult =
   | { ok: true; store: TopicStoreData; topic: Topic }
+  | { ok: false; error: TopicWriteError };
+
+export type ResourceWriteResult =
+  | { ok: true; store: TopicStoreData; resource: Resource; topic: Topic }
   | { ok: false; error: TopicWriteError };
 
 const DEFAULT_STATUS: TopicStatus = "to_learn";
@@ -114,6 +127,15 @@ export function parseInboxTopicWrite(
   };
 }
 
+export function parseResourceWrite(formData: FormData): ResourceWriteFields {
+  return {
+    topicId: String(formData.get("topicId") ?? ""),
+    title: String(formData.get("title") ?? ""),
+    url: String(formData.get("url") ?? ""),
+    type: String(formData.get("type") ?? ""),
+  };
+}
+
 function optionalText(value?: string) {
   const trimmed = value?.trim();
   return trimmed ? trimmed : undefined;
@@ -129,6 +151,78 @@ function isDifficulty(value: string): value is TopicDifficulty {
 
 function isStatus(value: string): value is TopicStatus {
   return (topicStatuses as readonly string[]).includes(value);
+}
+
+function isResourceType(value: string): value is ResourceType {
+  return (resourceTypes as readonly string[]).includes(value);
+}
+
+function isHttpUrl(value: string) {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function validateResourceFields(
+  store: TopicStoreData,
+  fields: ResourceWriteFields,
+):
+  | TopicWriteError
+  | { topic: Topic; title: string; url: string; type: ResourceType } {
+  const topicId = fields.topicId.trim();
+  const topic = store.topics.find((item) => item.id === topicId);
+
+  if (!topic) {
+    return { message: "Topic not found." };
+  }
+
+  const title = fields.title.trim();
+
+  if (!title) {
+    return { field: "title", message: "Resource title is required." };
+  }
+
+  const url = fields.url.trim();
+
+  if (!url || !isHttpUrl(url)) {
+    return {
+      field: "url",
+      message: "Enter a valid http:// or https:// URL.",
+    };
+  }
+
+  const type = fields.type.trim();
+
+  if (!isResourceType(type)) {
+    return { field: "type", message: "Choose a resource type." };
+  }
+
+  return { topic, title, url, type };
+}
+
+function nextResourceId(
+  resources: Resource[],
+  topicId: string,
+  title: string,
+) {
+  const slug = slugifyTitle(title) || "resource";
+  const baseId = `${topicId}-${slug}`;
+  const usedIds = new Set(resources.map((resource) => resource.id));
+
+  if (!usedIds.has(baseId)) {
+    return baseId;
+  }
+
+  let suffix = 2;
+
+  while (usedIds.has(`${baseId}-${suffix}`)) {
+    suffix += 1;
+  }
+
+  return `${baseId}-${suffix}`;
 }
 
 export function relatedRelationId(leftTopicId: string, rightTopicId: string) {
@@ -496,3 +590,101 @@ export function connectionCount(relations: TopicRelation[], topicId: string) {
       relation.sourceTopicId === topicId || relation.targetTopicId === topicId,
   ).length;
 }
+
+export function applyCreateResource(
+  store: TopicStoreData,
+  fields: ResourceWriteFields,
+): ResourceWriteResult {
+  const parsed = validateResourceFields(store, fields);
+
+  if ("message" in parsed) {
+    return { ok: false, error: parsed };
+  }
+
+  const resource: Resource = {
+    id: nextResourceId(store.resources, parsed.topic.id, parsed.title),
+    topicId: parsed.topic.id,
+    title: parsed.title,
+    url: parsed.url,
+    type: parsed.type,
+  };
+
+  return {
+    ok: true,
+    topic: parsed.topic,
+    resource,
+    store: {
+      ...store,
+      resources: [...store.resources, resource],
+    },
+  };
+}
+
+export function applyUpdateResource(
+  store: TopicStoreData,
+  resourceId: string,
+  fields: ResourceWriteFields,
+): ResourceWriteResult {
+  const current = store.resources.find((resource) => resource.id === resourceId);
+
+  if (!current) {
+    return { ok: false, error: { message: "Resource not found." } };
+  }
+
+  const parsed = validateResourceFields(store, {
+    ...fields,
+    topicId: fields.topicId || current.topicId,
+  });
+
+  if ("message" in parsed) {
+    return { ok: false, error: parsed };
+  }
+
+  const resource: Resource = {
+    id: current.id,
+    topicId: parsed.topic.id,
+    title: parsed.title,
+    url: parsed.url,
+    type: parsed.type,
+  };
+
+  return {
+    ok: true,
+    topic: parsed.topic,
+    resource,
+    store: {
+      ...store,
+      resources: store.resources.map((item) =>
+        item.id === resourceId ? resource : item,
+      ),
+    },
+  };
+}
+
+export function applyDeleteResource(
+  store: TopicStoreData,
+  resourceId: string,
+): ResourceWriteResult {
+  const current = store.resources.find((resource) => resource.id === resourceId);
+
+  if (!current) {
+    return { ok: false, error: { message: "Resource not found." } };
+  }
+
+  const topic = store.topics.find((item) => item.id === current.topicId);
+
+  if (!topic) {
+    return { ok: false, error: { message: "Topic not found." } };
+  }
+
+  return {
+    ok: true,
+    topic,
+    resource: current,
+    store: {
+      ...store,
+      resources: store.resources.filter((item) => item.id !== resourceId),
+    },
+  };
+}
+
