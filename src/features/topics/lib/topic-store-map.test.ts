@@ -4,11 +4,12 @@ import {
   relationFromRow,
   relationToRow,
   resourceFromRow,
+  resourceToRow,
   topicFromRow,
   topicOwnedRelations,
   topicToRow,
 } from "@/features/topics/lib/topic-store-map";
-import type { Topic, TopicRelation } from "@/features/topics/types";
+import type { Resource, Topic, TopicRelation } from "@/features/topics/types";
 
 const topic: Topic = {
   id: "lora",
@@ -52,16 +53,23 @@ describe("relation and resource mapping", () => {
     expect(relationFromRow(relationToRow(relation))).toEqual(relation);
   });
 
-  it("maps resource topic ids", () => {
-    expect(
-      resourceFromRow({
-        id: "rag-paper",
-        topic_id: "rag",
-        title: "Original Paper",
-        url: "https://arxiv.org/abs/2005.11401",
-        type: "paper",
-      }).topicId,
-    ).toBe("rag");
+  it("maps resource topic ids in both directions", () => {
+    const resource: Resource = {
+      id: "rag-paper",
+      topicId: "rag",
+      title: "Original Paper",
+      url: "https://arxiv.org/abs/2005.11401",
+      type: "paper",
+    };
+
+    expect(resourceToRow(resource)).toEqual({
+      id: "rag-paper",
+      topic_id: "rag",
+      title: "Original Paper",
+      url: "https://arxiv.org/abs/2005.11401",
+      type: "paper",
+    });
+    expect(resourceFromRow(resourceToRow(resource))).toEqual(resource);
   });
 });
 

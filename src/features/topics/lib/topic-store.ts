@@ -5,6 +5,7 @@ import {
   relationFromRow,
   relationToRow,
   resourceFromRow,
+  resourceToRow,
   topicFromRow,
   topicOwnedRelations,
   topicToRow,
@@ -13,12 +14,16 @@ import {
   type TopicRow,
 } from "@/features/topics/lib/topic-store-map";
 import {
+  applyCreateResource,
   applyCreateTopic,
   applyDeleteInboxTopic,
+  applyDeleteResource,
   applyQuickAddInbox,
   applyResetTopicStatusToLearn,
+  applyUpdateResource,
   applyUpdateTopic,
   type InboxTopicWriteFields,
+  type ResourceWriteFields,
   type TopicStoreData,
   type TopicWriteFields,
 } from "@/features/topics/lib/topic-write";
@@ -158,3 +163,57 @@ export async function deleteInboxTopic(topicId: string) {
   throwIfError("Failed to delete topic", deleted.error);
   return result;
 }
+
+export async function createTopicResource(fields: ResourceWriteFields) {
+  const store = await readTopicStore();
+  const result = applyCreateResource(store, fields);
+
+  if (!result.ok) {
+    return result;
+  }
+
+  const supabase = createSupabaseServerClient();
+  const inserted = await supabase
+    .from("resources")
+    .insert(resourceToRow(result.resource));
+  throwIfError("Failed to create resource", inserted.error);
+  return result;
+}
+
+export async function updateTopicResource(
+  resourceId: string,
+  fields: ResourceWriteFields,
+) {
+  const store = await readTopicStore();
+  const result = applyUpdateResource(store, resourceId, fields);
+
+  if (!result.ok) {
+    return result;
+  }
+
+  const supabase = createSupabaseServerClient();
+  const updated = await supabase
+    .from("resources")
+    .update(resourceToRow(result.resource))
+    .eq("id", resourceId);
+  throwIfError("Failed to update resource", updated.error);
+  return result;
+}
+
+export async function deleteTopicResource(resourceId: string) {
+  const store = await readTopicStore();
+  const result = applyDeleteResource(store, resourceId);
+
+  if (!result.ok) {
+    return result;
+  }
+
+  const supabase = createSupabaseServerClient();
+  const deleted = await supabase
+    .from("resources")
+    .delete()
+    .eq("id", resourceId);
+  throwIfError("Failed to delete resource", deleted.error);
+  return result;
+}
+

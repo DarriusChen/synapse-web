@@ -3,13 +3,17 @@ import { describe, expect, it } from "vitest";
 import { buildLearningMap } from "@/features/learning-map/lib/build-learning-map";
 import { topicRelations, topics } from "@/features/topics/data/topics";
 import {
+  applyCreateResource,
   applyCreateTopic,
   applyDeleteInboxTopic,
+  applyDeleteResource,
   applyQuickAddInbox,
   applyResetTopicStatusToLearn,
+  applyUpdateResource,
   applyUpdateTopic,
   incomingPrerequisiteIds,
   parseInboxTopicWrite,
+  parseResourceWrite,
   parseTopicWrite,
   relatedRelationId,
   slugifyTitle,
@@ -362,3 +366,189 @@ describe("applyDeleteInboxTopic", () => {
     expect(result.error.field).toBe("status");
   });
 });
+
+describe("parseResourceWrite", () => {
+  it("reads resource write fields from form data", () => {
+    const formData = new FormData();
+    formData.set("topicId", "rag");
+    formData.set("title", "RAG Study Notes");
+    formData.set("url", "https://example.com/rag-notes");
+    formData.set("type", "notes");
+
+    expect(parseResourceWrite(formData)).toEqual({
+      topicId: "rag",
+      title: "RAG Study Notes",
+      url: "https://example.com/rag-notes",
+      type: "notes",
+    });
+  });
+});
+
+describe("applyCreateResource", () => {
+  it("creates a valid resource and generates collision-safe ids", () => {
+    const first = applyCreateResource(seedStore, {
+      topicId: "rag",
+      title: "  Original Paper  ",
+      url: "  https://arxiv.org/abs/2005.11401  ",
+      type: "paper",
+    });
+
+    expect(first.ok).toBe(true);
+    if (!first.ok) {
+      return;
+    }
+
+    expect(first.resource).toEqual({
+      id: "rag-original-paper",
+      topicId: "rag",
+      title: "Original Paper",
+      url: "https://arxiv.org/abs/2005.11401",
+      type: "paper",
+    });
+    expect(first.store.resources).toEqual([first.resource]);
+
+    const second = applyCreateResource(first.store, {
+      topicId: "rag",
+      title: "Original Paper",
+      url: "https://example.com/paper-2",
+      type: "paper",
+    });
+
+    expect(second.ok).toBe(true);
+    if (!second.ok) {
+      return;
+    }
+
+    expect(second.resource.id).toBe("rag-original-paper-2");
+    expect(second.store.resources).toHaveLength(2);
+  });
+
+  it("rejects unknown topicId, empty title, invalid URLs, and unknown resource types", () => {
+    const unknownTopic = applyCreateResource(seedStore, {
+      topicId: "missing-topic",
+      title: "Resource",
+      url: "https://example.com",
+      type: "website",
+    });
+    expect(unknownTopic.ok).toBe(false);
+
+    const emptyTitle = applyCreateResource(seedStore, {
+      topicId: "rag",
+      title: "   ",
+      url: "https://example.com",
+      type: "website",
+    });
+    expect(emptyTitle).toEqual({
+      ok: false,
+      error: { field: "title", message: "Resource title is required." },
+    });
+
+    const malformedUrl = applyCreateResource(seedStore, {
+      topicId: "rag",
+      title: "Docs",
+      url: "not-a-url",
+      type: "website",
+    });
+    expect(malformedUrl).toEqual({
+      ok: false,
+      error: {
+        field: "url",
+        message: "Enter a valid http:// or https:// URL.",
+      },
+    });
+
+    const jsUrl = applyCreateResource(seedStore, {
+      topicId: "rag",
+      title: "Docs",
+      url: "javascript:alert(1)",
+      type: "website",
+    });
+    expect(jsUrl).toEqual({
+      ok: false,
+      error: {
+        field: "url",
+        message: "Enter a valid http:// or https:// URL.",
+      },
+    });
+
+    const badType = applyCreateResource(seedStore, {
+      topicId: "rag",
+      title: "Docs",
+      url: "https://example.com",
+      type: "podcast",
+    });
+    expect(badType).toEqual({
+      ok: false,
+      error: { field: "type", message: "Choose a resource type." },
+    });
+  });
+});
+
+describe("applyUpdateResource and applyDeleteResource", () => {
+  const storeWithResource: TopicStoreData = {
+    ...seedStore,
+    resources: [
+      {
+        id: "rag-notes",
+        topicId: "rag",
+        title: "Old Notes",
+        url: "https://example.com/old",
+        type: "notes",
+      },
+    ],
+  };
+
+  it("updates an existing resource's title, url, and type", () => {
+    const result = applyUpdateResource(storeWithResource, "rag-notes", {
+      topicId: "rag",
+      title: "Updated Tutorial",
+      url: "https://example.com/tutorial",
+      type: "tutorial",
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+
+    expect(result.resource).toEqual({
+      id: "rag-notes",
+      topicId: "rag",
+      title: "Updated Tutorial",
+      url: "https://example.com/tutorial",
+      type: "tutorial",
+    });
+    expect(result.store.resources).toEqual([result.resource]);
+  });
+
+  it("rejects updating or deleting a non-existent resource", () => {
+    const updateMissing = applyUpdateResource(
+      storeWithResource,
+      "missing-id",
+      {
+        topicId: "rag",
+        title: "Title",
+        url: "https://example.com",
+        type: "notes",
+      },
+    );
+    expect(updateMissing.ok).toBe(false);
+
+    const deleteMissing = applyDeleteResource(storeWithResource, "missing-id");
+    expect(deleteMissing.ok).toBe(false);
+  });
+
+  it("deletes an existing resource from the store", () => {
+    const result = applyDeleteResource(storeWithResource, "rag-notes");
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+
+    expect(result.resource.id).toBe("rag-notes");
+    expect(result.topic.id).toBe("rag");
+    expect(result.store.resources).toEqual([]);
+  });
+});
+

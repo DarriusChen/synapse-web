@@ -22,3 +22,13 @@ export const resourceTypeIcons: Record<ResourceType, string> = {
   repository: "💻",
   website: "🌐",
 };
+
+export const resourceTypeLabels: Record<ResourceType, string> = {
+  notes: "Notes",
+  paper: "Paper",
+  video: "Video",
+  tutorial: "Tutorial",
+  repository: "Repository",
+  website: "Website",
+};
+

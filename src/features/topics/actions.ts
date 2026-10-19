@@ -5,13 +5,17 @@ import { redirect } from "next/navigation";
 
 import {
   createInboxTopic,
+  createTopicResource,
   createTopicWithRelations,
   deleteInboxTopic,
+  deleteTopicResource,
   resetTopicStatusToLearn,
+  updateTopicResource,
   updateTopicWithRelations,
 } from "@/features/topics/lib/topic-store";
 import {
   parseInboxTopicWrite,
+  parseResourceWrite,
   parseTopicWrite,
 } from "@/features/topics/lib/topic-write";
 import { assertAdmin } from "@/lib/admin-guard";
@@ -103,3 +107,50 @@ export async function deleteInboxTopicAction(formData: FormData) {
   revalidateTopicViews(result.topic.slug);
   redirect("/admin/topics");
 }
+
+export async function createResourceAction(
+  _prev: TopicFormState,
+  formData: FormData,
+): Promise<TopicFormState> {
+  await assertAdmin();
+  const result = await createTopicResource(parseResourceWrite(formData));
+
+  if (!result.ok) {
+    return { error: result.error.message, field: result.error.field };
+  }
+
+  revalidateTopicViews(result.topic.slug);
+  return null;
+}
+
+export async function updateResourceAction(
+  _prev: TopicFormState,
+  formData: FormData,
+): Promise<TopicFormState> {
+  await assertAdmin();
+  const resourceId = String(formData.get("resourceId") ?? "");
+  const result = await updateTopicResource(
+    resourceId,
+    parseResourceWrite(formData),
+  );
+
+  if (!result.ok) {
+    return { error: result.error.message, field: result.error.field };
+  }
+
+  revalidateTopicViews(result.topic.slug);
+  return null;
+}
+
+export async function deleteResourceAction(formData: FormData): Promise<void> {
+  await assertAdmin();
+  const resourceId = String(formData.get("resourceId") ?? "");
+  const result = await deleteTopicResource(resourceId);
+
+  if (!result.ok) {
+    throw new Error(result.error.message);
+  }
+
+  revalidateTopicViews(result.topic.slug);
+}
+

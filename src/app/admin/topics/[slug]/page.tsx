@@ -3,9 +3,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { SiteHeader } from "@/components/site-header";
-import { updateTopicAction } from "@/features/topics/actions";
+import {
+  createResourceAction,
+  deleteResourceAction,
+  updateResourceAction,
+  updateTopicAction,
+} from "@/features/topics/actions";
 import { DeleteInboxTopicButton } from "@/features/topics/components/delete-inbox-topic";
 import { TopicForm } from "@/features/topics/components/topic-form";
+import { TopicResourcesManager } from "@/features/topics/components/topic-resources-manager";
 import { getTopicBySlug, getVisibleTopicCount } from "@/features/topics/lib/topic-detail";
 import { readTopicStore } from "@/features/topics/lib/topic-store";
 import {
@@ -62,6 +68,16 @@ export default async function EditTopicPage({ params }: EditTopicPageProps) {
               />
             ) : null
           }
+        />
+
+        <TopicResourcesManager
+          topicId={topic.id}
+          resources={store.resources.filter(
+            (resource) => resource.topicId === topic.id,
+          )}
+          createAction={createResourceAction}
+          updateAction={updateResourceAction}
+          deleteAction={deleteResourceAction}
         />
       </section>
     </main>
