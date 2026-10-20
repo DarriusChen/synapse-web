@@ -18,6 +18,7 @@ type TopicFormProps = {
   selectedRelatedIds?: string[];
   submitLabel: string;
   actions?: ReactNode;
+  children?: ReactNode;
 };
 
 export function TopicForm({
@@ -28,6 +29,7 @@ export function TopicForm({
   selectedRelatedIds = [],
   submitLabel,
   actions,
+  children,
 }: TopicFormProps) {
   const formId = useId();
   const [state, formAction, pending] = useActionState(action, null);
@@ -175,6 +177,7 @@ export function TopicForm({
       </button>
       {actions}
     </div>
+    {children}
     </div>
   );
 }

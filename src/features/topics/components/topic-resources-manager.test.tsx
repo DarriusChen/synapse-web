@@ -33,9 +33,9 @@ describe("TopicResourcesManager", () => {
       />,
     );
 
-    expect(
-      screen.getByRole("heading", { name: "Resources & Study Notes" }),
-    ).toBeInTheDocument();
+    expect(screen.getByTestId("topic-resources-manager")).toHaveTextContent(
+      "Resources & Study Notes",
+    );
     expect(screen.getByTestId("resources-empty")).toHaveTextContent(
       "No resources or study notes linked to this topic yet.",
     );

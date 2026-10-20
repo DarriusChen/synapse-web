@@ -1425,21 +1425,24 @@ button.admin-page__action {
 }
 
 .topic-resources {
-  margin-top: 48px;
-  padding-top: 32px;
-  border-top: 1px solid var(--border);
+  margin: 28px 0 0;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
   display: grid;
-  gap: 20px;
+  gap: 16px;
 }
 
-.topic-resources__header h2 {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 640;
-  letter-spacing: -0.025em;
+.topic-resources legend {
+  padding: 0 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-.topic-resources__header p {
+.topic-resources__intro {
   margin: 0;
   color: var(--muted);
   font-size: 13px;
@@ -1574,10 +1577,8 @@ button.admin-page__action {
 }
 
 .topic-resources__add-form {
-  padding: 18px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--surface);
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
 }
 
 .topic-resources__add-form h3 {

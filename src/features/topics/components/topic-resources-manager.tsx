@@ -195,19 +195,15 @@ export function TopicResourcesManager({
   );
 
   return (
-    <section
+    <fieldset
       className="topic-resources"
-      aria-labelledby="topic-resources-heading"
       data-testid="topic-resources-manager"
     >
-      <div className="topic-resources__header">
-        <h2 id="topic-resources-heading">Resources & Study Notes</h2>
-        <p>
-          Items with type <strong>Notes</strong> appear under{" "}
-          <strong>Study notes</strong> on the topic page, while all other types
-          appear under <strong>Resources</strong>.
-        </p>
-      </div>
+      <legend>Resources & Study Notes</legend>
+      <p className="topic-resources__intro">
+        Notes appear under Study notes on the topic page; other types appear
+        under Resources.
+      </p>
 
       {resources.length === 0 ? (
         <p className="topic-resources__empty" data-testid="resources-empty">
@@ -286,6 +282,6 @@ export function TopicResourcesManager({
           {pending ? "Adding…" : "Add resource"}
         </button>
       </form>
-    </section>
+    </fieldset>
   );
 }

@@ -68,17 +68,17 @@ export default async function EditTopicPage({ params }: EditTopicPageProps) {
               />
             ) : null
           }
-        />
-
-        <TopicResourcesManager
-          topicId={topic.id}
-          resources={store.resources.filter(
-            (resource) => resource.topicId === topic.id,
-          )}
-          createAction={createResourceAction}
-          updateAction={updateResourceAction}
-          deleteAction={deleteResourceAction}
-        />
+        >
+          <TopicResourcesManager
+            topicId={topic.id}
+            resources={store.resources.filter(
+              (resource) => resource.topicId === topic.id,
+            )}
+            createAction={createResourceAction}
+            updateAction={updateResourceAction}
+            deleteAction={deleteResourceAction}
+          />
+        </TopicForm>
       </section>
     </main>
   );
